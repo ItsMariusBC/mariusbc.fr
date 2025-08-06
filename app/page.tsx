@@ -166,7 +166,24 @@ export default function Home() {
     loadData();
   }, []);
 
-  const handleContactClick = () => {
+  const handleContactClick = async () => {
+    // Track click analytics
+    try {
+      await fetch('/api/analytics', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          type: 'contact',
+          targetName: 'contact'
+        })
+      });
+    } catch (error) {
+      console.error('Analytics tracking failed:', error);
+    }
+
+    // Execute the original click action
     if (siteConfig?.contactButtonUrl) {
       if (siteConfig.contactButtonUrl.startsWith('mailto:') || siteConfig.contactButtonUrl.startsWith('tel:')) {
         window.location.href = siteConfig.contactButtonUrl;
@@ -233,18 +250,43 @@ export default function Home() {
         <Dock>
           {dockIcons.map((icon) => {
             const IconComponent = IconMap[icon.iconName] || Mail;
+            
+            const handleDockIconClick = async (e: React.MouseEvent) => {
+              // Track click analytics
+              try {
+                await fetch('/api/analytics', {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json',
+                  },
+                  body: JSON.stringify({
+                    type: 'dock_icon',
+                    targetId: icon.id,
+                    targetName: icon.name
+                  })
+                });
+              } catch (error) {
+                console.error('Analytics tracking failed:', error);
+              }
+
+              // Continue with normal navigation
+              if (icon.url.startsWith('http')) {
+                window.open(icon.url, '_blank', 'noopener,noreferrer');
+              } else {
+                window.location.href = icon.url;
+              }
+            };
+            
             return (
               <DockIcon key={icon.id}>
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <a 
-                      href={icon.url}
-                      target={icon.url.startsWith('http') ? '_blank' : '_self'}
-                      rel={icon.url.startsWith('http') ? 'noopener noreferrer' : undefined}
+                    <button 
+                      onClick={handleDockIconClick}
                       className="flex items-center justify-center bg-white/10 hover:bg-white/20 text-white w-12 h-12 rounded-2xl transition-colors duration-200 backdrop-blur-md border border-white/20"
                     >
                       <IconComponent className="w-6 h-6" />
-                    </a>
+                    </button>
                   </TooltipTrigger>
                   <TooltipContent side="top" className="bg-white/10 backdrop-blur-md border border-white/20 text-white px-3 py-1 rounded-lg">
                     <p>{icon.tooltip}</p>
