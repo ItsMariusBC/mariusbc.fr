@@ -29,8 +29,8 @@ FROM node:18-alpine AS production
 
 WORKDIR /app
 
-# Install necessary packages
-RUN apk add --no-cache openssl curl
+# Install necessary packages including su-exec for user switching
+RUN apk add --no-cache openssl curl su-exec
 
 # Create non-root user
 RUN addgroup --system --gid 1001 nodejs
@@ -42,7 +42,7 @@ COPY package*.json ./
 # Install only production dependencies
 RUN npm ci --only=production && npm cache clean --force
 
-# Copy Prisma files
+# Copy Prisma files and client
 COPY --from=builder /app/prisma ./prisma
 COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
 
@@ -50,14 +50,15 @@ COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
-# Switch to non-root user
-USER nextjs
+# Copy startup script
+COPY startup.sh ./startup.sh
+RUN chmod +x ./startup.sh
 
 # Expose port
 EXPOSE 3000
 
 # Health check
-HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+HEALTHCHECK --interval=30s --timeout=10s --start-period=30s --retries=3 \
   CMD curl -f http://localhost:3000/api/health || exit 1
 
 # Environment variables
@@ -65,5 +66,5 @@ ENV NODE_ENV=production
 ENV PORT=3000
 ENV HOSTNAME="0.0.0.0"
 
-# Start the application
-CMD ["node", "server.js"]
+# Start the application with migrations
+CMD ["./startup.sh"]
