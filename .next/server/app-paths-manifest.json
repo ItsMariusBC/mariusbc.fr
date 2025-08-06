@@ -1,0 +1,5 @@
+{
+  "/page": "app/page.js",
+  "/api/dock-icons/route": "app/api/dock-icons/route.js",
+  "/api/site-config/route": "app/api/site-config/route.js"
+}
