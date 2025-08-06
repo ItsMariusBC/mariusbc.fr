@@ -57,14 +57,14 @@ RUN chmod +x ./startup.sh
 # Expose port
 EXPOSE 3000
 
-# Health check
+# Health check (Railway uses PORT variable, default to 3000 for local)
 HEALTHCHECK --interval=30s --timeout=10s --start-period=30s --retries=3 \
-  CMD curl -f http://localhost:3000/api/health || exit 1
+  CMD curl -f http://localhost:${PORT:-3000}/api/health || exit 1
 
 # Environment variables
 ENV NODE_ENV=production
-ENV PORT=3000
 ENV HOSTNAME="0.0.0.0"
+# PORT will be set by Railway automatically
 
 # Start the application with migrations
 CMD ["./startup.sh"]

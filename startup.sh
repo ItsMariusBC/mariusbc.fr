@@ -22,7 +22,11 @@ npx prisma generate
 
 # Seed database if needed (optional, will fail gracefully if data exists)
 echo "🌱 Seeding database (if needed)..."
-npx prisma db seed || echo "Seeding skipped (data may already exist)"
+if command -v tsx >/dev/null 2>&1; then
+  npx prisma db seed || echo "Seeding skipped (data may already exist)"
+else
+  echo "tsx not available, skipping seeding - will create default data via API"
+fi
 
 echo "✅ Database setup complete"
 
