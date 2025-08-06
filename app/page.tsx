@@ -110,7 +110,7 @@ export default function Home() {
     }, 3000);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [words.length]);
 
   useEffect(() => {
     const loadData = async () => {
@@ -191,7 +191,7 @@ export default function Home() {
       <div className="flex-1 flex items-center justify-center w-full max-w-4xl">
         <div className="flex flex-col items-center justify-center text-center">
           <SparklesText className="text-3xl font-normal whitespace-nowrap text-white/90 mb-4">
-            Hello moi c'est
+            Hello moi c&apos;est
           </SparklesText>
           
           <VideoText 

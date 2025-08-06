@@ -343,7 +343,7 @@ export default function AdminDashboard() {
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-white/90 mb-2">
-                  URL du bouton "Me contacter"
+                  URL du bouton &quot;Me contacter&quot;
                 </label>
                 <input
                   type="text"
