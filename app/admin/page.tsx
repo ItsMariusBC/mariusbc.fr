@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { signIn, useSession } from '@/lib/auth-client';
 import { SparklesText } from '@/components/magicui/sparkles-text';
@@ -13,10 +13,26 @@ export default function AdminLogin() {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [adminExists, setAdminExists] = useState<boolean | null>(null);
   const router = useRouter();
   const { data: session, isPending } = useSession();
 
-  if (isPending) {
+  useEffect(() => {
+    const checkAdminExists = async () => {
+      try {
+        const response = await fetch('/api/admin-exists');
+        const data = await response.json();
+        setAdminExists(data.adminExists);
+      } catch (error) {
+        console.error('Error checking admin existence:', error);
+        setAdminExists(false);
+      }
+    };
+
+    checkAdminExists();
+  }, []);
+
+  if (isPending || adminExists === null) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-[#0f1116] via-[#1a1b26] to-[#0f1116] flex items-center justify-center">
         <div className="text-white/90 text-xl">Chargement...</div>
@@ -129,17 +145,19 @@ export default function AdminLogin() {
             </ShinyButton>
           </form>
 
-          <div className="mt-6 text-center">
-            <p className="text-white/60 text-sm">
-              Pas encore de compte ?{' '}
-              <Link
-                href="/admin/signup"
-                className="text-purple-400 hover:text-purple-300 transition-colors"
-              >
-                Créer un compte
-              </Link>
-            </p>
-          </div>
+          {!adminExists && (
+            <div className="mt-6 text-center">
+              <p className="text-white/60 text-sm">
+                Pas encore de compte ?{' '}
+                <Link
+                  href="/admin/signup"
+                  className="text-purple-400 hover:text-purple-300 transition-colors"
+                >
+                  Créer un compte
+                </Link>
+              </p>
+            </div>
+          )}
         </div>
       </div>
     </div>

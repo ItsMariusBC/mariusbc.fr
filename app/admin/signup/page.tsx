@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { signUp, useSession } from '@/lib/auth-client';
 import { SparklesText } from '@/components/magicui/sparkles-text';
@@ -14,13 +14,47 @@ export default function AdminSignup() {
   const [name, setName] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [adminExists, setAdminExists] = useState<boolean | null>(null);
   const router = useRouter();
   const { data: session, isPending } = useSession();
 
-  if (isPending) {
+  useEffect(() => {
+    const checkAdminExists = async () => {
+      try {
+        const response = await fetch('/api/admin-exists');
+        const data = await response.json();
+        setAdminExists(data.adminExists);
+        
+        if (data.adminExists) {
+          router.push('/admin');
+        }
+      } catch (error) {
+        console.error('Error checking admin existence:', error);
+        router.push('/admin');
+      }
+    };
+
+    checkAdminExists();
+  }, [router]);
+
+  if (isPending || adminExists === null) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-[#0f1116] via-[#1a1b26] to-[#0f1116] flex items-center justify-center">
         <div className="text-white/90 text-xl">Chargement...</div>
+      </div>
+    );
+  }
+
+  if (adminExists) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-[#0f1116] via-[#1a1b26] to-[#0f1116] flex items-center justify-center p-4">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold text-white/90 mb-4">Accès non autorisé</h1>
+          <p className="text-white/70 mb-6">Un compte administrateur existe déjà.</p>
+          <Link href="/admin" className="text-purple-400 hover:text-purple-300 transition-colors">
+            Retour à la connexion
+          </Link>
+        </div>
       </div>
     );
   }
@@ -36,6 +70,16 @@ export default function AdminSignup() {
     setError('');
 
     try {
+      // Double-check admin doesn't exist before creating
+      const checkResponse = await fetch('/api/admin-exists');
+      const checkData = await checkResponse.json();
+      
+      if (checkData.adminExists) {
+        setError('Un compte administrateur existe déjà');
+        setLoading(false);
+        return;
+      }
+
       const result = await signUp.email({
         email,
         password,
