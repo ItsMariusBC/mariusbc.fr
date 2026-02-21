@@ -20,7 +20,8 @@
     "docker:dev:logs": "docker-compose -f docker-compose.dev.yml logs -f"
   },
   "dependencies": {
-    "@prisma/client": "^5.7.1",
+    "@prisma/adapter-pg": "^7.4.1",
+    "@prisma/client": "^7.4.1",
     "@radix-ui/react-tooltip": "^1.2.8",
     "bcryptjs": "^3.0.3",
     "better-auth": "^1.4.18",
@@ -28,6 +29,7 @@
     "framer-motion": "^10.16.4",
     "lucide-react": "^0.575.0",
     "next": "^14.2.35",
+    "pg": "^8.18.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "tailwind-merge": "^1.14.0"
@@ -35,6 +37,7 @@
   "devDependencies": {
     "@types/bcryptjs": "^3.0.0",
     "@types/node": "^18.19.3",
+    "@types/pg": "^8.16.0",
     "@types/react": "^18.2.15",
     "@types/react-dom": "^18.2.7",
     "autoprefixer": "^10.4.24",
@@ -42,7 +45,7 @@
     "eslint-config-next": "^14.0.4",
     "eslint-plugin-react-hooks": "^4.6.0",
     "postcss": "^8.5.6",
-    "prisma": "^5.7.1",
+    "prisma": "^7.4.1",
     "tailwindcss": "^3.3.3",
     "tsx": "^4.21.0",
     "typescript": "^5.9.3"
