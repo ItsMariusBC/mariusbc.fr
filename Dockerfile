@@ -23,7 +23,7 @@ FROM node:20-alpine AS runner
 
 WORKDIR /app
 
-RUN apk add --no-cache curl su-exec
+RUN apk add --no-cache curl su-exec openssl
 
 # Non-root user for running the app
 RUN addgroup --system --gid 1001 nodejs && \
@@ -46,6 +46,9 @@ COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma/
 # Prisma CLI (used by startup.sh to run db push)
 COPY --from=builder /app/node_modules/prisma ./node_modules/prisma/
 COPY --from=builder /app/node_modules/.bin/prisma ./node_modules/.bin/prisma
+
+# Prisma native engines (needed by CLI for db push / migrate operations)
+COPY --from=builder /app/node_modules/@prisma/engines ./node_modules/@prisma/engines/
 
 # Startup script
 COPY startup.sh ./
