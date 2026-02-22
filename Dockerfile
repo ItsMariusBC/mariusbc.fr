@@ -40,13 +40,8 @@ COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 COPY --from=builder /app/prisma ./prisma/
 COPY --from=builder /app/prisma.config.ts ./
 
-# All Prisma packages: CLI + WASM client + native engines + all transitive @prisma/* deps
-COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma/
-COPY --from=builder /app/node_modules/@prisma ./node_modules/@prisma/
-COPY --from=builder /app/node_modules/prisma ./node_modules/prisma/
-RUN mkdir -p ./node_modules/.bin && \
-    ln -sf ../prisma/build/index.js ./node_modules/.bin/prisma && \
-    chmod +x ./node_modules/.bin/prisma
+# Copy entire node_modules for Prisma CLI + all transitive deps (symlinks preserved)
+COPY --from=builder /app/node_modules ./node_modules/
 
 # Startup script
 COPY startup.sh ./
