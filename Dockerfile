@@ -40,15 +40,11 @@ COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 COPY --from=builder /app/prisma ./prisma/
 COPY --from=builder /app/prisma.config.ts ./
 
-# Prisma generated WASM client
+# All Prisma packages: CLI + WASM client + native engines + all transitive @prisma/* deps
 COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma/
-
-# Prisma CLI (used by startup.sh to run db push)
+COPY --from=builder /app/node_modules/@prisma ./node_modules/@prisma/
 COPY --from=builder /app/node_modules/prisma ./node_modules/prisma/
 COPY --from=builder /app/node_modules/.bin/prisma ./node_modules/.bin/prisma
-
-# Prisma native engines (needed by CLI for db push / migrate operations)
-COPY --from=builder /app/node_modules/@prisma/engines ./node_modules/@prisma/engines/
 
 # Startup script
 COPY startup.sh ./
