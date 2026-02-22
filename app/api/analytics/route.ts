@@ -15,8 +15,8 @@ export async function POST(request: NextRequest) {
     }
 
     // Get client info
-    const ipAddress = request.ip || 
-      request.headers.get('x-forwarded-for')?.split(',')[0] || 
+    const ipAddress =
+      request.headers.get('x-forwarded-for')?.split(',')[0] ||
       request.headers.get('x-real-ip') ||
       'unknown';
     

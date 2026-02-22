@@ -1,12 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  experimental: {
-    serverComponentsExternalPackages: ['@prisma/client', 'bcryptjs'],
-  },
-  webpack: (config) => {
-    config.externals.push('@prisma/client');
-    return config;
-  },
+  serverExternalPackages: ['@prisma/client', 'bcryptjs'],
+  turbopack: {},
   output: 'standalone',
 }
 

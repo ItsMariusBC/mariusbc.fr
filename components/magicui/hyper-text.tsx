@@ -31,6 +31,18 @@ const DEFAULT_CHARACTER_SET = Object.freeze(
 
 const getRandomInt = (max: number): number => Math.floor(Math.random() * max);
 
+// Module-level cache: motion-wrapped components are created once per element type
+// and reused across renders. The same reference is returned for the same `as` value.
+const motionComponentCache = new Map<React.ElementType, React.ElementType>();
+
+function getMotionComponent(as: React.ElementType): React.ElementType {
+  if (!motionComponentCache.has(as)) {
+    motionComponentCache.set(as, motion(as as any) as unknown as React.ElementType);
+  }
+  return motionComponentCache.get(as)!;
+}
+
+/* eslint-disable react-hooks/static-components */
 export function HyperText({
   children,
   className,
@@ -42,8 +54,6 @@ export function HyperText({
   characterSet = DEFAULT_CHARACTER_SET,
   ...props
 }: HyperTextProps) {
-  const MotionComponent = motion(Component);
-
   const [displayText, setDisplayText] = useState<string[]>(() =>
     children.split(""),
   );
@@ -122,6 +132,10 @@ export function HyperText({
     return () => cancelAnimationFrame(animationFrameId);
   }, [children, duration, isAnimating, characterSet]);
 
+  // Safe: getMotionComponent uses a module-level cache, so the same
+  // component reference is returned for the same `as` value every time.
+  const MotionComponent = getMotionComponent(Component);
+
   return (
     <MotionComponent
       ref={elementRef}
@@ -142,3 +156,4 @@ export function HyperText({
     </MotionComponent>
   );
 }
+/* eslint-enable react-hooks/static-components */
