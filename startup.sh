@@ -1,35 +1,35 @@
 #!/bin/sh
 
-# Startup script for production deployment
 echo "🚀 Starting portfolio deployment..."
 
-# Wait for database to be ready
+# Use the local prisma binary directly (avoids npx resolution issues in production)
+PRISMA="./node_modules/.bin/prisma"
+
+# Wait for the database to be ready (max 2 minutes)
 echo "⏳ Waiting for database connection..."
-until npx prisma db push --accept-data-loss 2>/dev/null; do
-  echo "Database not ready yet, retrying in 5 seconds..."
+MAX_RETRIES=24
+COUNT=0
+
+until $PRISMA db push --accept-data-loss; do
+  COUNT=$((COUNT + 1))
+  if [ $COUNT -ge $MAX_RETRIES ]; then
+    echo "❌ Database unreachable after $MAX_RETRIES attempts. Exiting."
+    exit 1
+  fi
+  echo "Database not ready yet ($COUNT/$MAX_RETRIES), retrying in 5 seconds..."
   sleep 5
 done
 
-echo "✅ Database connected successfully"
+echo "✅ Database schema up to date"
 
-# Run Prisma migrations and ensure database is up to date
-echo "🔄 Running database migrations..."
-npx prisma db push --accept-data-loss
-
-# Generate Prisma client (in case it's not available)
-echo "⚙️ Ensuring Prisma client is available..."
-npx prisma generate
-
-# Seed database if needed (optional, will fail gracefully if data exists)
+# Seed database if possible
 echo "🌱 Seeding database (if needed)..."
 if command -v tsx >/dev/null 2>&1; then
-  npx prisma db seed || echo "Seeding skipped (data may already exist)"
+  $PRISMA db seed || echo "Seeding skipped (data may already exist)"
 else
-  echo "tsx not available, skipping seeding - will create default data via API"
+  echo "tsx not available, skipping seed"
 fi
 
-echo "✅ Database setup complete"
+echo "✅ Startup complete — launching app"
 
-# Change to non-root user
-echo "👤 Switching to non-root user..."
 exec su-exec nextjs node server.js
