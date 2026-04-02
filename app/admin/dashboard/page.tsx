@@ -2,9 +2,10 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { signOut, useSession } from '@/lib/auth-client';
+import { signOut, useSession } from 'next-auth/react';
 import { SparklesText } from '@/components/magicui/sparkles-text';
 import { ShinyButton } from '@/components/magicui/shiny-button';
+import { ICON_MAP, ICON_OPTIONS } from '@/lib/dock-icons';
 import { 
   Settings, 
   LogOut, 
@@ -16,46 +17,7 @@ import {
   BarChart3,
   TrendingUp,
   MousePointer,
-  Github,
-  Linkedin,
-  FileText,
-  MessageSquare,
   Mail,
-  Phone,
-  Instagram,
-  Twitter,
-  Facebook,
-  Youtube,
-  Twitch,
-  MessageCircle,
-  Music,
-  Globe,
-  Download,
-  Code,
-  Briefcase,
-  User,
-  MapPin,
-  Calendar,
-  Camera,
-  Video,
-  Gamepad2,
-  Coffee,
-  Heart,
-  Star,
-  Award,
-  BookOpen,
-  Headphones,
-  Terminal,
-  Cpu,
-  Palette,
-  Zap,
-  Shield,
-  Lock,
-  Key,
-  Database,
-  Server,
-  Cloud,
-  Rocket
 } from 'lucide-react';
 import type { DockIcon, SiteConfig } from '@prisma/client';
 
@@ -63,93 +25,6 @@ interface AnalyticsData {
   contactClicks: number;
   dockClicks: { name: string; clicks: number }[];
 }
-
-// Icon mapping pour l'admin
-const IconMap: Record<string, React.ComponentType<any>> = {
-  Github,
-  Linkedin,
-  FileText,
-  MessageSquare,
-  Mail,
-  Phone,
-  Instagram,
-  Twitter,
-  Facebook,
-  Youtube,
-  Twitch,
-  MessageCircle,
-  Music,
-  Globe,
-  Download,
-  Code,
-  Briefcase,
-  User,
-  MapPin,
-  Calendar,
-  Camera,
-  Video,
-  Gamepad2,
-  Coffee,
-  Heart,
-  Star,
-  Award,
-  BookOpen,
-  Headphones,
-  Terminal,
-  Cpu,
-  Palette,
-  Zap,
-  Shield,
-  Lock,
-  Key,
-  Database,
-  Server,
-  Cloud,
-  Rocket,
-};
-
-const iconOptions = [
-  { name: 'Github', component: Github, label: 'GitHub' },
-  { name: 'Linkedin', component: Linkedin, label: 'LinkedIn' },
-  { name: 'FileText', component: FileText, label: 'CV/Resume' },
-  { name: 'MessageSquare', component: MessageSquare, label: 'Discord' },
-  { name: 'Mail', component: Mail, label: 'Email' },
-  { name: 'Phone', component: Phone, label: 'Téléphone' },
-  { name: 'Instagram', component: Instagram, label: 'Instagram' },
-  { name: 'Twitter', component: Twitter, label: 'Twitter/X' },
-  { name: 'Facebook', component: Facebook, label: 'Facebook' },
-  { name: 'Youtube', component: Youtube, label: 'YouTube' },
-  { name: 'Twitch', component: Twitch, label: 'Twitch' },
-  { name: 'MessageCircle', component: MessageCircle, label: 'WhatsApp' },
-  { name: 'Music', component: Music, label: 'Spotify/Music' },
-  { name: 'Globe', component: Globe, label: 'Site Web' },
-  { name: 'Download', component: Download, label: 'Téléchargement' },
-  { name: 'Code', component: Code, label: 'Code/Dev' },
-  { name: 'Briefcase', component: Briefcase, label: 'Portfolio' },
-  { name: 'User', component: User, label: 'Profil' },
-  { name: 'MapPin', component: MapPin, label: 'Localisation' },
-  { name: 'Calendar', component: Calendar, label: 'Calendrier' },
-  { name: 'Camera', component: Camera, label: 'Photos' },
-  { name: 'Video', component: Video, label: 'Vidéos' },
-  { name: 'Gamepad2', component: Gamepad2, label: 'Gaming' },
-  { name: 'Coffee', component: Coffee, label: 'Blog/Café' },
-  { name: 'Heart', component: Heart, label: 'Favoris' },
-  { name: 'Star', component: Star, label: 'Étoiles' },
-  { name: 'Award', component: Award, label: 'Récompenses' },
-  { name: 'BookOpen', component: BookOpen, label: 'Lecture/Blog' },
-  { name: 'Headphones', component: Headphones, label: 'Audio/Podcast' },
-  { name: 'Terminal', component: Terminal, label: 'Terminal/CLI' },
-  { name: 'Cpu', component: Cpu, label: 'Tech/Hardware' },
-  { name: 'Palette', component: Palette, label: 'Design/Art' },
-  { name: 'Zap', component: Zap, label: 'Énergie/Rapide' },
-  { name: 'Shield', component: Shield, label: 'Sécurité' },
-  { name: 'Lock', component: Lock, label: 'Privé/Sécurisé' },
-  { name: 'Key', component: Key, label: 'Accès/Clé' },
-  { name: 'Database', component: Database, label: 'Base de données' },
-  { name: 'Server', component: Server, label: 'Serveur' },
-  { name: 'Cloud', component: Cloud, label: 'Cloud' },
-  { name: 'Rocket', component: Rocket, label: 'Lancement/Startup' },
-];
 
 function getDomainFromUrl(url: string) {
   try {
@@ -162,8 +37,25 @@ function getDomainFromUrl(url: string) {
   }
 }
 
+async function fetchJson<T>(input: RequestInfo, init?: RequestInit): Promise<T> {
+  const response = await fetch(input, init);
+  const contentType = response.headers.get('content-type') || '';
+  const isJson = contentType.includes('application/json');
+  const payload = isJson ? await response.json() : null;
+
+  if (!response.ok) {
+    const message =
+      payload && typeof payload === 'object' && 'error' in payload && typeof payload.error === 'string'
+        ? payload.error
+        : `Request failed with status ${response.status}`;
+    throw new Error(message);
+  }
+
+  return payload as T;
+}
+
 export default function AdminDashboard() {
-  const { data: session, isPending } = useSession();
+  const { data: session, status } = useSession();
   const [siteConfig, setSiteConfig] = useState<SiteConfig | null>(null);
   const [dockIcons, setDockIcons] = useState<DockIcon[]>([]);
   const [loading, setLoading] = useState(true);
@@ -179,27 +71,26 @@ export default function AdminDashboard() {
   });
   const [analytics, setAnalytics] = useState<AnalyticsData>({ contactClicks: 0, dockClicks: [] });
   const [activeTab, setActiveTab] = useState('analytics');
+  const [loadError, setLoadError] = useState('');
   const router = useRouter();
 
   useEffect(() => {
     const loadData = async () => {
       try {
-        const [configResponse, iconsResponse, analyticsResponse] = await Promise.all([
-          fetch('/api/site-config'),
-          fetch('/api/dock-icons?include_inactive=true'),
-          fetch('/api/analytics')
+        setLoadError('');
+        const [configData, iconsData, analyticsData] = await Promise.all([
+          fetchJson<SiteConfig | null>('/api/site-config'),
+          fetchJson<DockIcon[]>('/api/dock-icons?include_inactive=true'),
+          fetchJson<AnalyticsData>('/api/analytics')
         ]);
-        
-        const configData = await configResponse.json();
-        const iconsData = await iconsResponse.json();
-        const analyticsData = await analyticsResponse.json();
-        
+
         setSiteConfig(configData);
         setContactUrl(configData?.contactButtonUrl || '');
         setDockIcons(iconsData);
         setAnalytics(analyticsData);
       } catch (error) {
         console.error('Error loading data:', error);
+        setLoadError(error instanceof Error ? error.message : 'Erreur de chargement');
       } finally {
         setLoading(false);
       }
@@ -210,30 +101,39 @@ export default function AdminDashboard() {
     }
   }, [session]);
 
+  useEffect(() => {
+    if (status !== 'loading' && !session) {
+      router.push('/admin');
+    }
+  }, [session, status, router]);
+
+  useEffect(() => {
+    if (status !== 'loading' && session?.user?.role !== 'admin') {
+      signOut({ redirect: false }).finally(() => {
+        router.push('/admin');
+      });
+    }
+  }, [session, status, router]);
+
   const handleLogout = async () => {
-    await signOut();
+    await signOut({ redirect: false });
     router.push('/admin');
   };
 
   const handleSaveConfig = async () => {
     setSaving(true);
     try {
-      const response = await fetch('/api/site-config', {
+      const updatedConfig = await fetchJson<SiteConfig>('/api/site-config', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ contactButtonUrl: contactUrl }),
       });
-      
-      if (response.ok) {
-        const updatedConfig = await response.json();
-        setSiteConfig(updatedConfig);
-        alert('Configuration sauvegardée !');
-      } else {
-        throw new Error('Erreur de sauvegarde');
-      }
+
+      setSiteConfig(updatedConfig);
+      alert('Configuration sauvegardee');
     } catch (error) {
       console.error('Error saving config:', error);
-      alert('Erreur lors de la sauvegarde');
+      alert(error instanceof Error ? error.message : 'Erreur lors de la sauvegarde');
     } finally {
       setSaving(false);
     }
@@ -241,24 +141,19 @@ export default function AdminDashboard() {
 
   const handleAddIcon = async () => {
     try {
-      const response = await fetch('/api/dock-icons', {
+      const createdIcon = await fetchJson<DockIcon>('/api/dock-icons', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(newIcon),
       });
-      
-      if (response.ok) {
-        const createdIcon = await response.json();
-        setDockIcons([...dockIcons, createdIcon]);
-        setNewIcon({ name: '', iconName: 'Mail', url: '', tooltip: '' });
-        setShowAddIcon(false);
-        alert('Icône ajoutée !');
-      } else {
-        throw new Error('Erreur lors de la création');
-      }
+
+      setDockIcons([...dockIcons, createdIcon]);
+      setNewIcon({ name: '', iconName: 'Mail', url: '', tooltip: '' });
+      setShowAddIcon(false);
+      alert('Icone ajoutee');
     } catch (error) {
       console.error('Error adding icon:', error);
-      alert('Erreur lors de l\'ajout');
+      alert(error instanceof Error ? error.message : 'Erreur lors de l\'ajout');
     }
   };
 
@@ -266,25 +161,20 @@ export default function AdminDashboard() {
     if (!editingIcon) return;
     
     try {
-      const response = await fetch(`/api/dock-icons/${editingIcon.id}`, {
+      const updatedIcon = await fetchJson<DockIcon>(`/api/dock-icons/${editingIcon.id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(editingIcon),
       });
-      
-      if (response.ok) {
-        const updatedIcon = await response.json();
-        setDockIcons(dockIcons.map(icon => 
-          icon.id === editingIcon.id ? updatedIcon : icon
-        ));
-        setEditingIcon(null);
-        alert('Icône mise à jour !');
-      } else {
-        throw new Error('Erreur de mise à jour');
-      }
+
+      setDockIcons(dockIcons.map(icon => 
+        icon.id === editingIcon.id ? updatedIcon : icon
+      ));
+      setEditingIcon(null);
+      alert('Icone mise a jour');
     } catch (error) {
       console.error('Error updating icon:', error);
-      alert('Erreur lors de la mise à jour');
+      alert(error instanceof Error ? error.message : 'Erreur lors de la mise a jour');
     }
   };
 
@@ -292,16 +182,12 @@ export default function AdminDashboard() {
     if (!confirm('Êtes-vous sûr de vouloir supprimer cette icône ?')) return;
     
     try {
-      const response = await fetch(`/api/dock-icons/${id}`, {
+      await fetchJson<{ success: boolean }>(`/api/dock-icons/${id}`, {
         method: 'DELETE',
       });
-      
-      if (response.ok) {
-        setDockIcons(dockIcons.filter(icon => icon.id !== id));
-        alert('Icône supprimée !');
-      } else {
-        throw new Error('Erreur de suppression');
-      }
+
+      setDockIcons(dockIcons.filter(icon => icon.id !== id));
+      alert('Icone supprimee');
     } catch (error) {
       console.error('Error deleting icon:', error);
       alert('Erreur lors de la suppression');
@@ -310,25 +196,20 @@ export default function AdminDashboard() {
 
   const handleToggleIcon = async (icon: DockIcon) => {
     try {
-      const response = await fetch(`/api/dock-icons/${icon.id}`, {
+      const updatedIcon = await fetchJson<DockIcon>(`/api/dock-icons/${icon.id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ ...icon, isActive: !icon.isActive }),
       });
-      
-      if (response.ok) {
-        const updatedIcon = await response.json();
-        setDockIcons(dockIcons.map(i => i.id === icon.id ? updatedIcon : i));
-      } else {
-        throw new Error('Erreur de modification');
-      }
+
+      setDockIcons(dockIcons.map(i => i.id === icon.id ? updatedIcon : i));
     } catch (error) {
       console.error('Error toggling icon:', error);
-      alert('Erreur lors de la modification');
+      alert(error instanceof Error ? error.message : 'Erreur lors de la modification');
     }
   };
 
-  if (isPending || loading) {
+  if (status === 'loading' || loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-[#0f1116] via-[#1a1b26] to-[#0f1116] flex items-center justify-center">
         <div className="text-white/90 text-xl">Chargement...</div>
@@ -336,8 +217,7 @@ export default function AdminDashboard() {
     );
   }
 
-  if (!session) {
-    router.push('/admin');
+  if (!session || session.user?.role !== 'admin') {
     return null;
   }
 
@@ -395,6 +275,12 @@ export default function AdminDashboard() {
         </div>
 
         {/* Content based on active tab */}
+        {loadError && (
+          <div className="mb-6 rounded-2xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-200">
+            {loadError}
+          </div>
+        )}
+
         {activeTab === 'analytics' && (
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {/* Contact Button Analytics */}
@@ -525,7 +411,7 @@ export default function AdminDashboard() {
 
               <div className="space-y-3 max-h-96 overflow-y-auto">
                 {dockIcons.map((icon) => {
-                  const IconComponent = IconMap[icon.iconName] || Mail;
+                  const IconComponent = ICON_MAP[icon.iconName] || Mail;
                   return (
                     <div key={icon.id} className="flex items-center gap-3 p-3 bg-white/5 rounded-xl border border-white/10">
                       <div className="flex items-center justify-center w-10 h-10 bg-white/10 rounded-lg flex-shrink-0">
@@ -592,7 +478,7 @@ export default function AdminDashboard() {
                 <div>
                   <label className="block text-sm font-medium text-white/90 mb-2">Icône</label>
                   <div className="grid grid-cols-6 sm:grid-cols-8 gap-2 max-h-48 overflow-y-auto p-2 bg-white/5 rounded-xl border border-white/10">
-                    {iconOptions.map((option) => (
+                    {ICON_OPTIONS.map((option) => (
                       <button
                         key={option.name}
                         onClick={() => setNewIcon({ ...newIcon, iconName: option.name })}
@@ -675,7 +561,7 @@ export default function AdminDashboard() {
                 <div>
                   <label className="block text-sm font-medium text-white/90 mb-2">Icône</label>
                   <div className="grid grid-cols-6 sm:grid-cols-8 gap-2 max-h-48 overflow-y-auto p-2 bg-white/5 rounded-xl border border-white/10">
-                    {iconOptions.map((option) => (
+                    {ICON_OPTIONS.map((option) => (
                       <button
                         key={option.name}
                         onClick={() => setEditingIcon({ ...editingIcon, iconName: option.name })}

@@ -32,7 +32,7 @@ export function VideoText({
       <div
         className="relative"
         style={{
-          backgroundImage: `url(${src})`,
+          backgroundImage: `url(${src}), linear-gradient(135deg, rgb(157, 122, 255), rgb(254, 139, 187))`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           backgroundClip: 'text',

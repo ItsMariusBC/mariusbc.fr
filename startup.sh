@@ -1,35 +1,24 @@
 #!/bin/sh
 
-echo "🚀 Starting portfolio deployment..."
+set -eu
 
-# Use the local prisma binary directly (avoids npx resolution issues in production)
-PRISMA="./node_modules/.bin/prisma"
+echo "Starting portfolio deployment..."
 
-# Wait for the database to be ready (max 2 minutes)
-echo "⏳ Waiting for database connection..."
-MAX_RETRIES=24
-COUNT=0
+PRISMA="node ./node_modules/prisma/build/index.js"
 
-until $PRISMA db push --accept-data-loss; do
-  COUNT=$((COUNT + 1))
-  if [ $COUNT -ge $MAX_RETRIES ]; then
-    echo "❌ Database unreachable after $MAX_RETRIES attempts. Exiting."
-    exit 1
-  fi
-  echo "Database not ready yet ($COUNT/$MAX_RETRIES), retrying in 5 seconds..."
-  sleep 5
-done
+# Push schema to SQLite (creates the file if it doesn't exist)
+echo "Applying database schema..."
+$PRISMA db push --skip-generate
+echo "Database schema up to date"
 
-echo "✅ Database schema up to date"
-
-# Seed database if possible
-echo "🌱 Seeding database (if needed)..."
-if command -v tsx >/dev/null 2>&1; then
+# Seed only when explicitly requested.
+if [ "${SEED_ON_STARTUP:-false}" = "true" ]; then
+  echo "Seeding database..."
   $PRISMA db seed || echo "Seeding skipped (data may already exist)"
 else
-  echo "tsx not available, skipping seed"
+  echo "Seeding skipped (set SEED_ON_STARTUP=true to enable)"
 fi
 
-echo "✅ Startup complete — launching app"
+echo "Startup complete - launching app"
 
-exec su-exec nextjs node server.js
+exec node server.js
