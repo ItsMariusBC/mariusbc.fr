@@ -22,6 +22,20 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const { contactButtonUrl } = body;
 
+    if (!contactButtonUrl || typeof contactButtonUrl !== 'string' || contactButtonUrl.length > 2000) {
+      return NextResponse.json({ error: 'Invalid contact URL' }, { status: 400 });
+    }
+
+    const SAFE_URL_SCHEMES = ['https:', 'http:', 'mailto:', 'tel:'];
+    try {
+      const parsed = new URL(contactButtonUrl);
+      if (!SAFE_URL_SCHEMES.includes(parsed.protocol)) {
+        return NextResponse.json({ error: 'Invalid URL scheme' }, { status: 400 });
+      }
+    } catch {
+      return NextResponse.json({ error: 'Invalid URL' }, { status: 400 });
+    }
+
     const existing = await prisma.siteConfig.findFirst();
 
     let config;

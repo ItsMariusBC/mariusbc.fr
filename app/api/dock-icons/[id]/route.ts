@@ -16,6 +16,18 @@ export async function PUT(
     const { id } = await params;
     const { name, iconName, url, tooltip, order, isActive } = body;
 
+    if (url !== undefined) {
+      const SAFE_URL_SCHEMES = ['https:', 'http:', 'mailto:', 'tel:'];
+      try {
+        const parsed = new URL(url);
+        if (!SAFE_URL_SCHEMES.includes(parsed.protocol)) {
+          return NextResponse.json({ error: 'Invalid URL scheme' }, { status: 400 });
+        }
+      } catch {
+        return NextResponse.json({ error: 'Invalid URL' }, { status: 400 });
+      }
+    }
+
     const icon = await prisma.dockIcon.update({
       where: { id },
       data: { name, iconName, url, tooltip, order, isActive }

@@ -22,6 +22,13 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    if (typeof password !== 'string' || password.length < 8) {
+      return NextResponse.json(
+        { error: 'Le mot de passe doit contenir au moins 8 caracteres' },
+        { status: 400 }
+      );
+    }
+
     const hashedPassword = await bcrypt.hash(password, 12);
 
     await prisma.user.create({

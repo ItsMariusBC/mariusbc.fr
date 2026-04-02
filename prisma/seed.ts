@@ -9,9 +9,6 @@ const prisma = new PrismaClient({ adapter });
 async function main() {
   console.log('🌱 Seeding database...');
 
-  // Note: Better Auth will handle user creation
-  // First admin user will be created through the signup process
-
   // Create default site configuration
   const siteConfig = await prisma.siteConfig.upsert({
     where: { id: 'default' },
