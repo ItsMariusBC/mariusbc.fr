@@ -1,20 +1,22 @@
 #!/bin/sh
 
+set -eu
+
 echo "Starting portfolio deployment..."
 
-PRISMA="./node_modules/.bin/prisma"
+PRISMA="node ./node_modules/prisma/build/index.js"
 
 # Push schema to SQLite (creates the file if it doesn't exist)
 echo "Applying database schema..."
-$PRISMA db push
+$PRISMA db push --skip-generate
 echo "Database schema up to date"
 
-# Seed database if possible
-echo "Seeding database (if needed)..."
-if command -v tsx >/dev/null 2>&1; then
+# Seed only when explicitly requested.
+if [ "${SEED_ON_STARTUP:-false}" = "true" ]; then
+  echo "Seeding database..."
   $PRISMA db seed || echo "Seeding skipped (data may already exist)"
 else
-  echo "tsx not available, skipping seed"
+  echo "Seeding skipped (set SEED_ON_STARTUP=true to enable)"
 fi
 
 echo "Startup complete - launching app"
