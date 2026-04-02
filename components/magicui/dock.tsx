@@ -26,7 +26,7 @@ export function Dock({ children, direction = "middle" }: DockProps) {
       <motion.div
         onMouseEnter={() => setHovered(true)}
         onMouseLeave={() => setHovered(false)}
-        className="fixed bottom-4 flex h-20 items-center gap-2 rounded-2xl bg-white/10 px-4 backdrop-blur-xl border border-white/20"
+        className="fixed bottom-4 left-1/2 flex h-20 -translate-x-1/2 items-center gap-2 rounded-2xl border border-white/20 bg-white/10 px-4 backdrop-blur-xl"
       >
         {children}
       </motion.div>
