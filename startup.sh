@@ -8,7 +8,7 @@ PRISMA="node ./node_modules/prisma/build/index.js"
 
 # Push schema to SQLite (creates the file if it doesn't exist)
 echo "Applying database schema..."
-$PRISMA db push --skip-generate
+$PRISMA db push
 echo "Database schema up to date"
 
 # Seed only when explicitly requested.
