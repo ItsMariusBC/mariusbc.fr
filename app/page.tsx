@@ -167,7 +167,7 @@ export default function Home() {
         </div>
       </main>
 
-      <nav aria-label="Liens sociaux">
+      <nav aria-label="Liens sociaux" className="fixed inset-x-0 bottom-4 z-10 flex justify-center px-4">
       <TooltipProvider>
         <Dock>
           {dockIcons.map((icon) => {
