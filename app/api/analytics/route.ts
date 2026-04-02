@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { auth } from '@/lib/auth';
 
 export async function POST(request: NextRequest) {
   try {
@@ -14,16 +15,14 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Target ID required for dock_icon type' }, { status: 400 });
     }
 
-    // Get client info
     const ipAddress =
       request.headers.get('x-forwarded-for')?.split(',')[0] ||
       request.headers.get('x-real-ip') ||
       'unknown';
-    
+
     const userAgent = request.headers.get('user-agent') || 'unknown';
     const referer = request.headers.get('referer') || '';
 
-    // Create analytics record
     await prisma.clickAnalytics.create({
       data: {
         type,
@@ -44,21 +43,22 @@ export async function POST(request: NextRequest) {
 
 export async function GET(request: NextRequest) {
   try {
+    const session = await auth();
+    if (!session) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
     const url = new URL(request.url);
     const type = url.searchParams.get('type');
 
     if (!type) {
-      // Get all analytics grouped by type and target
       const [contactClicks, dockClicks] = await Promise.all([
-        // Contact button clicks
         prisma.clickAnalytics.count({
           where: { type: 'contact' }
         }),
-
-        // Dock icon clicks grouped by target name
         prisma.clickAnalytics.groupBy({
           by: ['targetName'],
-          where: { 
+          where: {
             type: 'dock_icon',
             targetName: { not: null }
           },
@@ -92,7 +92,7 @@ export async function GET(request: NextRequest) {
     if (type === 'dock_icon') {
       const clicks = await prisma.clickAnalytics.groupBy({
         by: ['targetName'],
-        where: { 
+        where: {
           type: 'dock_icon',
           targetName: { not: null }
         },

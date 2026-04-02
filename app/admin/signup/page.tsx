@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { signUp, useSession } from '@/lib/auth-client';
+import { signIn, useSession } from 'next-auth/react';
 import { SparklesText } from '@/components/magicui/sparkles-text';
 import { ShinyButton } from '@/components/magicui/shiny-button';
 import { UserPlus, Mail, Lock } from 'lucide-react';
@@ -16,7 +16,7 @@ export default function AdminSignup() {
   const [error, setError] = useState('');
   const [adminExists, setAdminExists] = useState<boolean | null>(null);
   const router = useRouter();
-  const { data: session, isPending } = useSession();
+  const { data: session, status } = useSession();
 
   useEffect(() => {
     const checkAdminExists = async () => {
@@ -24,7 +24,7 @@ export default function AdminSignup() {
         const response = await fetch('/api/admin-exists');
         const data = await response.json();
         setAdminExists(data.adminExists);
-        
+
         if (data.adminExists) {
           router.push('/admin');
         }
@@ -37,7 +37,7 @@ export default function AdminSignup() {
     checkAdminExists();
   }, [router]);
 
-  if (isPending || adminExists === null) {
+  if (status === 'loading' || adminExists === null) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-[#0f1116] via-[#1a1b26] to-[#0f1116] flex items-center justify-center">
         <div className="text-white/90 text-xl">Chargement...</div>
@@ -49,10 +49,10 @@ export default function AdminSignup() {
     return (
       <div className="min-h-screen bg-gradient-to-br from-[#0f1116] via-[#1a1b26] to-[#0f1116] flex items-center justify-center p-4">
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-white/90 mb-4">Accès non autorisé</h1>
-          <p className="text-white/70 mb-6">Un compte administrateur existe déjà.</p>
+          <h1 className="text-2xl font-bold text-white/90 mb-4">Acces non autorise</h1>
+          <p className="text-white/70 mb-6">Un compte administrateur existe deja.</p>
           <Link href="/admin" className="text-purple-400 hover:text-purple-300 transition-colors">
-            Retour à la connexion
+            Retour a la connexion
           </Link>
         </div>
       </div>
@@ -70,29 +70,34 @@ export default function AdminSignup() {
     setError('');
 
     try {
-      // Double-check admin doesn't exist before creating
-      const checkResponse = await fetch('/api/admin-exists');
-      const checkData = await checkResponse.json();
-      
-      if (checkData.adminExists) {
-        setError('Un compte administrateur existe déjà');
+      // Create user via server-side API (enforces first-user restriction)
+      const res = await fetch('/api/auth/signup', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password, name }),
+      });
+
+      if (!res.ok) {
+        const data = await res.json();
+        setError(data.error || 'Erreur lors de la creation du compte');
         setLoading(false);
         return;
       }
 
-      const result = await signUp.email({
+      // Auto-login after signup
+      const result = await signIn('credentials', {
         email,
         password,
-        name,
+        redirect: false,
       });
 
-      if (result.error) {
-        setError(result.error.message || 'Erreur lors de la création du compte');
+      if (result?.error) {
+        setError('Compte cree mais erreur de connexion. Essayez de vous connecter.');
       } else {
         router.push('/admin/dashboard');
       }
     } catch (err) {
-      setError('Erreur lors de la création du compte');
+      setError('Erreur lors de la creation du compte');
       console.error('Signup error:', err);
     } finally {
       setLoading(false);
@@ -102,7 +107,7 @@ export default function AdminSignup() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#0f1116] via-[#1a1b26] to-[#0f1116] flex items-center justify-center p-4 relative overflow-hidden">
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_rgba(255,255,255,0.1)_0%,_transparent_65%)]" />
-      
+
       <div className="w-full max-w-md">
         <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-8 shadow-2xl">
           <div className="text-center mb-8">
@@ -110,7 +115,7 @@ export default function AdminSignup() {
               <UserPlus className="w-8 h-8 text-white/90" />
             </div>
             <SparklesText className="text-2xl font-bold text-white/90 mb-2">
-              Créer un compte admin
+              Creer un compte admin
             </SparklesText>
             <p className="text-white/70">Premier administrateur du site</p>
           </div>
@@ -191,13 +196,13 @@ export default function AdminSignup() {
                 "--glow-color": "rgba(157, 122, 255, 0.5)"
               } as React.CSSProperties}
             >
-              {loading ? 'Création...' : 'Créer le compte'}
+              {loading ? 'Creation...' : 'Creer le compte'}
             </ShinyButton>
           </form>
 
           <div className="mt-6 text-center">
             <p className="text-white/60 text-sm">
-              Déjà un compte ?{' '}
+              Deja un compte ?{' '}
               <Link
                 href="/admin"
                 className="text-purple-400 hover:text-purple-300 transition-colors"

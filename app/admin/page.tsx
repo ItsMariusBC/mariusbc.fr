@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { signIn, useSession } from '@/lib/auth-client';
+import { signIn, useSession } from 'next-auth/react';
 import { SparklesText } from '@/components/magicui/sparkles-text';
 import { ShinyButton } from '@/components/magicui/shiny-button';
 import { Lock, Mail } from 'lucide-react';
@@ -15,7 +15,7 @@ export default function AdminLogin() {
   const [error, setError] = useState('');
   const [adminExists, setAdminExists] = useState<boolean | null>(null);
   const router = useRouter();
-  const { data: session, isPending } = useSession();
+  const { data: session, status } = useSession();
 
   useEffect(() => {
     const checkAdminExists = async () => {
@@ -32,7 +32,7 @@ export default function AdminLogin() {
     checkAdminExists();
   }, []);
 
-  if (isPending || adminExists === null) {
+  if (status === 'loading' || adminExists === null) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-[#0f1116] via-[#1a1b26] to-[#0f1116] flex items-center justify-center">
         <div className="text-white/90 text-xl">Chargement...</div>
@@ -51,14 +51,15 @@ export default function AdminLogin() {
     setError('');
 
     try {
-      const result = await signIn.email({
+      const result = await signIn('credentials', {
         email,
         password,
+        redirect: false,
       });
 
-      if (result.error) {
-        setError(result.error.message || 'Erreur de connexion');
-      } else {
+      if (result?.error) {
+        setError('Email ou mot de passe incorrect');
+      } else if (result?.ok) {
         router.push('/admin/dashboard');
       }
     } catch (err) {
@@ -72,7 +73,7 @@ export default function AdminLogin() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#0f1116] via-[#1a1b26] to-[#0f1116] flex items-center justify-center p-4 relative overflow-hidden">
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_rgba(255,255,255,0.1)_0%,_transparent_65%)]" />
-      
+
       <div className="w-full max-w-md">
         <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-8 shadow-2xl">
           <div className="text-center mb-8">
@@ -82,7 +83,7 @@ export default function AdminLogin() {
             <SparklesText className="text-2xl font-bold text-white/90 mb-2">
               Administration
             </SparklesText>
-            <p className="text-white/70">Connectez-vous pour gérer votre site</p>
+            <p className="text-white/70">Connectez-vous pour gerer votre site</p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
@@ -153,7 +154,7 @@ export default function AdminLogin() {
                   href="/admin/signup"
                   className="text-purple-400 hover:text-purple-300 transition-colors"
                 >
-                  Créer un compte
+                  Creer un compte
                 </Link>
               </p>
             </div>

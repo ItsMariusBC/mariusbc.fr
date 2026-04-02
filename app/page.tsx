@@ -166,22 +166,13 @@ export default function Home() {
     loadData();
   }, []);
 
-  const handleContactClick = async () => {
-    // Track click analytics
-    try {
-      await fetch('/api/analytics', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          type: 'contact',
-          targetName: 'contact'
-        })
-      });
-    } catch (error) {
-      console.error('Analytics tracking failed:', error);
-    }
+  const handleContactClick = () => {
+    // Fire-and-forget analytics
+    fetch('/api/analytics', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ type: 'contact', targetName: 'contact' })
+    }).catch(() => {});
 
     // Execute the original click action
     if (siteConfig?.contactButtonUrl) {
@@ -195,8 +186,21 @@ export default function Home() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-[#0f1116] via-[#1a1b26] to-[#0f1116] flex items-center justify-center">
-        <div className="text-white/90 text-xl">Chargement...</div>
+      <div className="min-h-screen bg-gradient-to-br from-[#0f1116] via-[#1a1b26] to-[#0f1116] flex flex-col items-center justify-between p-4 relative overflow-hidden">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_rgba(255,255,255,0.1)_0%,_transparent_65%)]" />
+        <div className="flex-1 flex items-center justify-center w-full max-w-4xl">
+          <div className="flex flex-col items-center justify-center text-center gap-4">
+            <div className="h-8 w-48 bg-white/10 rounded-lg animate-pulse" />
+            <div className="h-24 w-80 bg-white/10 rounded-lg animate-pulse" />
+            <div className="h-10 w-40 bg-white/10 rounded-lg animate-pulse" />
+            <div className="h-12 w-48 bg-white/10 rounded-full animate-pulse mt-8" />
+          </div>
+        </div>
+        <div className="flex gap-3 mb-4">
+          {[...Array(4)].map((_, i) => (
+            <div key={i} className="w-12 h-12 bg-white/10 rounded-2xl animate-pulse" />
+          ))}
+        </div>
       </div>
     );
   }
@@ -204,15 +208,16 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#0f1116] via-[#1a1b26] to-[#0f1116] flex flex-col items-center justify-between p-4 relative overflow-hidden">
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_rgba(255,255,255,0.1)_0%,_transparent_65%)]" />
-      
-      <div className="flex-1 flex items-center justify-center w-full max-w-4xl">
+      <h1 className="sr-only">Marius - Developpeur, Musicien, SysAdmin</h1>
+
+      <main className="flex-1 flex items-center justify-center w-full max-w-4xl">
         <div className="flex flex-col items-center justify-center text-center">
           <SparklesText className="text-3xl font-normal whitespace-nowrap text-white/90 mb-4">
             Hello moi c&apos;est
           </SparklesText>
           
           <VideoText 
-            src="https://i.pinimg.com/originals/e1/8c/1b/e18c1bad870b18e5c8eff03c75aaf40c.gif"
+            src="/images/hero-bg.gif"
             fontSize={120}
             fontWeight={900}
             fontFamily="system-ui"
@@ -244,30 +249,21 @@ export default function Home() {
             Me contacter
           </ShinyButton>
         </div>
-      </div>
+      </main>
 
+      <nav aria-label="Liens sociaux">
       <TooltipProvider>
         <Dock>
           {dockIcons.map((icon) => {
             const IconComponent = IconMap[icon.iconName] || Mail;
             
-            const handleDockIconClick = async (e: React.MouseEvent) => {
-              // Track click analytics
-              try {
-                await fetch('/api/analytics', {
-                  method: 'POST',
-                  headers: {
-                    'Content-Type': 'application/json',
-                  },
-                  body: JSON.stringify({
-                    type: 'dock_icon',
-                    targetId: icon.id,
-                    targetName: icon.name
-                  })
-                });
-              } catch (error) {
-                console.error('Analytics tracking failed:', error);
-              }
+            const handleDockIconClick = () => {
+              // Fire-and-forget analytics
+              fetch('/api/analytics', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ type: 'dock_icon', targetId: icon.id, targetName: icon.name })
+              }).catch(() => {});
 
               // Continue with normal navigation
               if (icon.url.startsWith('http')) {
@@ -281,8 +277,9 @@ export default function Home() {
               <DockIcon key={icon.id}>
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <button 
+                    <button
                       onClick={handleDockIconClick}
+                      aria-label={icon.tooltip}
                       className="flex items-center justify-center bg-white/10 hover:bg-white/20 text-white w-12 h-12 rounded-2xl transition-colors duration-200 backdrop-blur-md border border-white/20"
                     >
                       <IconComponent className="w-6 h-6" />
@@ -297,6 +294,7 @@ export default function Home() {
           })}
         </Dock>
       </TooltipProvider>
+      </nav>
     </div>
   );
 }

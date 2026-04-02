@@ -1,112 +1,100 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "sqlite"
 }
 
+// === Auth.js v5 models ===
+
 model User {
-  id        String   @id @default(cuid())
-  email     String   @unique
-  name      String?
-  emailVerified Boolean @default(false) @map("email_verified")
-  image     String?
-  role      String   @default("admin")
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
-  
+  id            String    @id @default(cuid())
+  name          String?
+  email         String    @unique
+  emailVerified DateTime?
+  image         String?
+  password      String?
+  role          String    @default("admin")
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
   accounts Account[]
   sessions Session[]
-
-  @@map("user")
 }
 
 model Account {
   id                String  @id @default(cuid())
-  userId            String  @map("user_id")
-  accountId         String  @map("account_id")
-  providerId        String  @map("provider_id")
-  accessToken       String? @map("access_token")
-  refreshToken      String? @map("refresh_token")
-  idToken           String? @map("id_token")
-  accessTokenExpiresAt DateTime? @map("access_token_expires_at")
-  refreshTokenExpiresAt DateTime? @map("refresh_token_expires_at")
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
   scope             String?
-  password          String?
-  createdAt         DateTime @default(now()) @map("created_at")
-  updatedAt         DateTime @updatedAt @map("updated_at")
+  id_token          String?
+  session_state     String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@map("account")
+  @@unique([provider, providerAccountId])
 }
 
 model Session {
-  id        String   @id @default(cuid())
-  userId    String   @map("user_id")
-  token     String   @unique
-  expiresAt DateTime @map("expires_at")
-  ipAddress String?  @map("ip_address")
-  userAgent String?  @map("user_agent")
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@map("session")
 }
 
-model Verification {
-  id        String   @id @default(cuid())
+model VerificationToken {
   identifier String
-  value     String
-  expiresAt DateTime @map("expires_at")
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
+  token      String
+  expires    DateTime
 
-  @@map("verification")
+  @@unique([identifier, token])
 }
+
+// === App models ===
 
 model SiteConfig {
   id               String   @id @default(cuid())
-  contactButtonUrl String   @map("contact_button_url")
-  createdAt        DateTime @default(now()) @map("created_at")
-  updatedAt        DateTime @updatedAt @map("updated_at")
-
-  @@map("site_config")
+  contactButtonUrl String
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
 }
 
 model DockIcon {
   id        String   @id @default(cuid())
   name      String
-  iconName  String   @map("icon_name")
+  iconName  String
   url       String
   tooltip   String
   order     Int      @default(0)
-  isActive  Boolean  @default(true) @map("is_active")
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
-  
-  clickAnalytics ClickAnalytics[]
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  @@map("dock_icons")
+  clickAnalytics ClickAnalytics[]
 }
 
 model ClickAnalytics {
-  id        String   @id @default(cuid())
-  type      String   // "contact" or "dock_icon"
-  targetId  String?  @map("target_id") // dock icon ID if type is "dock_icon"
-  targetName String? @map("target_name") // icon name or "contact" for easier querying
-  ipAddress String?  @map("ip_address")
-  userAgent String?  @map("user_agent")
-  referer   String?
-  createdAt DateTime @default(now()) @map("created_at")
-  
-  dockIcon  DockIcon? @relation(fields: [targetId], references: [id], onDelete: Cascade)
+  id         String   @id @default(cuid())
+  type       String
+  targetId   String?
+  targetName String?
+  ipAddress  String?
+  userAgent  String?
+  referer    String?
+  createdAt  DateTime @default(now())
 
-  @@map("click_analytics")
+  dockIcon DockIcon? @relation(fields: [targetId], references: [id], onDelete: Cascade)
 }

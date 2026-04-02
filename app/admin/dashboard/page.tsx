@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { signOut, useSession } from '@/lib/auth-client';
+import { signOut, useSession } from 'next-auth/react';
 import { SparklesText } from '@/components/magicui/sparkles-text';
 import { ShinyButton } from '@/components/magicui/shiny-button';
 import { 
@@ -163,7 +163,7 @@ function getDomainFromUrl(url: string) {
 }
 
 export default function AdminDashboard() {
-  const { data: session, isPending } = useSession();
+  const { data: session, status } = useSession();
   const [siteConfig, setSiteConfig] = useState<SiteConfig | null>(null);
   const [dockIcons, setDockIcons] = useState<DockIcon[]>([]);
   const [loading, setLoading] = useState(true);
@@ -211,7 +211,7 @@ export default function AdminDashboard() {
   }, [session]);
 
   const handleLogout = async () => {
-    await signOut();
+    await signOut({ redirect: false });
     router.push('/admin');
   };
 
@@ -328,7 +328,7 @@ export default function AdminDashboard() {
     }
   };
 
-  if (isPending || loading) {
+  if (status === 'loading' || loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-[#0f1116] via-[#1a1b26] to-[#0f1116] flex items-center justify-center">
         <div className="text-white/90 text-xl">Chargement...</div>

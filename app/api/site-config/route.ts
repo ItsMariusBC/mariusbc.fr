@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { auth } from '@/lib/auth';
 
 export async function GET() {
   try {
@@ -11,13 +12,18 @@ export async function GET() {
   }
 }
 
-export async function PUT(request: NextRequest) {
+export async function POST(request: NextRequest) {
   try {
+    const session = await auth();
+    if (!session) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
     const body = await request.json();
     const { contactButtonUrl } = body;
-    
+
     const existing = await prisma.siteConfig.findFirst();
-    
+
     let config;
     if (existing) {
       config = await prisma.siteConfig.update({
@@ -29,7 +35,7 @@ export async function PUT(request: NextRequest) {
         data: { contactButtonUrl }
       });
     }
-    
+
     return NextResponse.json(config);
   } catch (error) {
     console.error('Error updating site config:', error);
