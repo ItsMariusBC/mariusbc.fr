@@ -16,12 +16,6 @@ COPY prisma ./prisma/
 
 RUN npm ci --include=dev --no-audit --no-fund
 
-# ── Prisma runtime stage ─────────────────────────────────────────────────────
-FROM deps AS prisma-runtime
-
-RUN npm pkg set dependencies.prisma=7.6.0 && \
-    npm prune --omit=dev --no-audit --no-fund
-
 # ── Build stage ──────────────────────────────────────────────────────────────
 FROM node:20-alpine AS builder
 
@@ -66,8 +60,9 @@ COPY --from=builder /app/prisma ./prisma/
 COPY --from=builder /app/prisma.config.ts ./
 COPY --from=builder /app/package.json ./package.json
 
-# Copy Prisma CLI from a dedicated minimal install; standalone already contains app runtime deps.
-COPY --from=prisma-runtime /app/node_modules ./node_modules/
+# Copy the full dependency tree so Prisma CLI and native SQLite dependencies
+# are always available at container startup.
+COPY --from=deps /app/node_modules ./node_modules/
 
 # Create data directory for SQLite
 RUN mkdir -p /app/data && chown nextjs:nodejs /app/data
