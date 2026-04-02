@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import { auth } from '@/lib/auth';
+import { requireAdmin } from '@/lib/admin-auth';
 
 export async function GET() {
   try {
@@ -14,15 +14,15 @@ export async function GET() {
 
 export async function POST(request: NextRequest) {
   try {
-    const session = await auth();
-    if (!session) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    const adminCheck = await requireAdmin();
+    if (adminCheck.response) {
+      return adminCheck.response;
     }
 
     const body = await request.json();
-    const { contactButtonUrl } = body;
+    const contactButtonUrl = typeof body?.contactButtonUrl === 'string' ? body.contactButtonUrl.trim() : '';
 
-    if (!contactButtonUrl || typeof contactButtonUrl !== 'string' || contactButtonUrl.length > 2000) {
+    if (!contactButtonUrl || contactButtonUrl.length > 2000) {
       return NextResponse.json({ error: 'Invalid contact URL' }, { status: 400 });
     }
 

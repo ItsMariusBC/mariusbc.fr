@@ -1,99 +1,15 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { 
-  Github,
-  Linkedin,
-  FileText,
-  MessageSquare,
-  Mail,
-  Phone,
-  Instagram,
-  Twitter,
-  Facebook,
-  Youtube,
-  Twitch,
-  MessageCircle,
-  Music,
-  Globe,
-  Download,
-  Code,
-  Briefcase,
-  User,
-  MapPin,
-  Calendar,
-  Camera,
-  Video,
-  Gamepad2,
-  Coffee,
-  Heart,
-  Star,
-  Award,
-  BookOpen,
-  Headphones,
-  Terminal,
-  Cpu,
-  Palette,
-  Zap,
-  Shield,
-  Lock,
-  Key,
-  Database,
-  Server,
-  Cloud,
-  Rocket
-} from 'lucide-react';
+import { Mail } from 'lucide-react';
 import { Dock, DockIcon } from '@/components/magicui/dock';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@radix-ui/react-tooltip";
 import { VideoText } from '@/components/magicui/video-text';
 import { SparklesText } from '@/components/magicui/sparkles-text';
 import { HyperText } from '@/components/magicui/hyper-text';
 import { ShinyButton } from '@/components/magicui/shiny-button';
+import { ICON_MAP } from '@/lib/dock-icons';
 import type { DockIcon as DockIconType, SiteConfig } from '@prisma/client';
-
-// Icon mapping pour les icônes Lucide
-const IconMap: Record<string, React.ComponentType<any>> = {
-  Github,
-  Linkedin,
-  FileText,
-  MessageSquare,
-  Mail,
-  Phone,
-  Instagram,
-  Twitter,
-  Facebook,
-  Youtube,
-  Twitch,
-  MessageCircle,
-  Music,
-  Globe,
-  Download,
-  Code,
-  Briefcase,
-  User,
-  MapPin,
-  Calendar,
-  Camera,
-  Video,
-  Gamepad2,
-  Coffee,
-  Heart,
-  Star,
-  Award,
-  BookOpen,
-  Headphones,
-  Terminal,
-  Cpu,
-  Palette,
-  Zap,
-  Shield,
-  Lock,
-  Key,
-  Database,
-  Server,
-  Cloud,
-  Rocket,
-};
 
 export default function Home() {
   const words = ["Développeur", "Musicien", "Passionné", "SysAdmin", "Créatif", "DevOps"];
@@ -255,7 +171,7 @@ export default function Home() {
       <TooltipProvider>
         <Dock>
           {dockIcons.map((icon) => {
-            const IconComponent = IconMap[icon.iconName] || Mail;
+            const IconComponent = ICON_MAP[icon.iconName] || Mail;
             
             const handleDockIconClick = () => {
               // Fire-and-forget analytics

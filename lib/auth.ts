@@ -61,11 +61,5 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   pages: {
     signIn: "/admin",
   },
-  secret: (() => {
-    const s = process.env.NEXTAUTH_SECRET;
-    if (!s || s.includes('your-secret-key-here')) {
-      throw new Error('NEXTAUTH_SECRET must be set to a secure random value');
-    }
-    return s;
-  })(),
+  secret: process.env.NEXTAUTH_SECRET,
 });

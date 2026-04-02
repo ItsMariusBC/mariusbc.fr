@@ -1,28 +1,19 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { auth } from '@/lib/auth';
-
-const SAFE_URL_SCHEMES = ['https:', 'http:', 'mailto:', 'tel:'];
-
-function isValidUrl(url: string): boolean {
-  try {
-    const parsed = new URL(url);
-    return SAFE_URL_SCHEMES.includes(parsed.protocol);
-  } catch {
-    return false;
-  }
-}
+import { requireAdmin } from '@/lib/admin-auth';
+import { validateDockIconInput } from '@/lib/dock-icons';
 
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
     const includeInactive = searchParams.get('include_inactive') === 'true';
 
-    // Only authenticated users can see inactive icons
+    // Only admins can access inactive icons from the management UI.
     if (includeInactive) {
-      const session = await auth();
-      if (!session) {
-        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      const adminCheck = await requireAdmin();
+      if (adminCheck.response) {
+        return adminCheck.response;
       }
     }
 
@@ -40,28 +31,23 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    const session = await auth();
-    if (!session) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    const adminCheck = await requireAdmin();
+    if (adminCheck.response) {
+      return adminCheck.response;
     }
 
-    const body = await request.json();
-    const { name, iconName, url, tooltip, order } = body;
-
-    if (!name || !iconName || !url || !tooltip) {
-      return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
+    const validation = validateDockIconInput(await request.json());
+    if (validation.error) {
+      return NextResponse.json({ error: validation.error }, { status: 400 });
     }
 
-    if (!isValidUrl(url)) {
-      return NextResponse.json({ error: 'Invalid URL scheme. Use https, http, mailto, or tel.' }, { status: 400 });
+    if (!validation.data) {
+      return NextResponse.json({ error: 'Invalid request body' }, { status: 400 });
     }
 
-    if (name.length > 100 || iconName.length > 50 || url.length > 2000 || tooltip.length > 200) {
-      return NextResponse.json({ error: 'Field length exceeded' }, { status: 400 });
-    }
-
-    let finalOrder = order;
-    if (!finalOrder) {
+    const createData = validation.data;
+    let finalOrder = createData.order;
+    if (finalOrder === undefined) {
       const maxOrderIcon = await prisma.dockIcon.findFirst({
         orderBy: { order: 'desc' }
       });
@@ -70,10 +56,10 @@ export async function POST(request: NextRequest) {
 
     const icon = await prisma.dockIcon.create({
       data: {
-        name,
-        iconName,
-        url,
-        tooltip,
+        name: createData.name!,
+        iconName: createData.iconName!,
+        url: createData.url!,
+        tooltip: createData.tooltip!,
         order: finalOrder
       }
     });

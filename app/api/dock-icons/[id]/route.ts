@@ -1,36 +1,33 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import { auth } from '@/lib/auth';
+import { requireAdmin } from '@/lib/admin-auth';
+import { validateDockIconInput } from '@/lib/dock-icons';
 
 export async function PUT(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const session = await auth();
-    if (!session) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    const adminCheck = await requireAdmin();
+    if (adminCheck.response) {
+      return adminCheck.response;
     }
 
-    const body = await request.json();
     const { id } = await params;
-    const { name, iconName, url, tooltip, order, isActive } = body;
-
-    if (url !== undefined) {
-      const SAFE_URL_SCHEMES = ['https:', 'http:', 'mailto:', 'tel:'];
-      try {
-        const parsed = new URL(url);
-        if (!SAFE_URL_SCHEMES.includes(parsed.protocol)) {
-          return NextResponse.json({ error: 'Invalid URL scheme' }, { status: 400 });
-        }
-      } catch {
-        return NextResponse.json({ error: 'Invalid URL' }, { status: 400 });
-      }
+    const validation = validateDockIconInput(await request.json(), { partial: true });
+    if (validation.error) {
+      return NextResponse.json({ error: validation.error }, { status: 400 });
     }
+
+    if (!validation.data || Object.keys(validation.data).length === 0) {
+      return NextResponse.json({ error: 'No fields to update' }, { status: 400 });
+    }
+
+    const updateData = validation.data;
 
     const icon = await prisma.dockIcon.update({
       where: { id },
-      data: { name, iconName, url, tooltip, order, isActive }
+      data: updateData
     });
 
     return NextResponse.json(icon);
@@ -45,9 +42,9 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const session = await auth();
-    if (!session) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    const adminCheck = await requireAdmin();
+    if (adminCheck.response) {
+      return adminCheck.response;
     }
 
     const { id } = await params;

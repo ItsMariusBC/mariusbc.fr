@@ -2,22 +2,24 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import bcrypt from 'bcryptjs';
 
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
 export async function POST(request: NextRequest) {
   try {
-    // Server-side first-user restriction
-    const userCount = await prisma.user.count();
-    if (userCount > 0) {
+    const { email, password, name } = await request.json();
+    const normalizedEmail = typeof email === 'string' ? email.trim().toLowerCase() : '';
+    const normalizedName = typeof name === 'string' ? name.trim() : '';
+
+    if (!normalizedEmail || !password) {
       return NextResponse.json(
-        { error: 'Un compte administrateur existe deja' },
-        { status: 403 }
+        { error: 'Email et mot de passe requis' },
+        { status: 400 }
       );
     }
 
-    const { email, password, name } = await request.json();
-
-    if (!email || !password) {
+    if (!EMAIL_REGEX.test(normalizedEmail) || normalizedEmail.length > 320) {
       return NextResponse.json(
-        { error: 'Email et mot de passe requis' },
+        { error: 'Adresse email invalide' },
         { status: 400 }
       );
     }
@@ -29,16 +31,37 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    if (normalizedName.length > 100) {
+      return NextResponse.json(
+        { error: 'Le nom ne doit pas depasser 100 caracteres' },
+        { status: 400 }
+      );
+    }
+
     const hashedPassword = await bcrypt.hash(password, 12);
 
-    await prisma.user.create({
-      data: {
-        email,
-        name,
-        password: hashedPassword,
-        role: 'admin',
-      },
+    const created = await prisma.$transaction(async (tx) => {
+      const userCount = await tx.user.count();
+      if (userCount > 0) {
+        return null;
+      }
+
+      return tx.user.create({
+        data: {
+          email: normalizedEmail,
+          name: normalizedName || null,
+          password: hashedPassword,
+          role: 'admin',
+        },
+      });
     });
+
+    if (!created) {
+      return NextResponse.json(
+        { error: 'Un compte administrateur existe deja' },
+        { status: 403 }
+      );
+    }
 
     return NextResponse.json({ success: true });
   } catch (error) {
