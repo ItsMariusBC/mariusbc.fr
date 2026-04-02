@@ -11,6 +11,49 @@ import { ShinyButton } from '@/components/magicui/shiny-button';
 import { ICON_MAP } from '@/lib/dock-icons';
 import type { DockIcon as DockIconType, SiteConfig } from '@prisma/client';
 
+const fallbackDockIcons: DockIconType[] = [
+  {
+    id: '1',
+    name: 'GitHub',
+    iconName: 'Github',
+    url: 'https://github.com/ItsMariusBC',
+    tooltip: 'GitHub',
+    order: 1,
+    isActive: true,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+  {
+    id: '2',
+    name: 'LinkedIn',
+    iconName: 'Linkedin',
+    url: 'https://www.linkedin.com/in/marius-bzcn/',
+    tooltip: 'LinkedIn',
+    order: 2,
+    isActive: true,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+  {
+    id: '3',
+    name: 'Instagram',
+    iconName: 'Instagram',
+    url: 'https://www.instagram.com/marius.bzc?igsh=MXdiYnZ6eWdmNGxsYQ%3D%3D&utm_source=qr',
+    tooltip: 'Instagram',
+    order: 3,
+    isActive: true,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+];
+
+const fallbackSiteConfig: SiteConfig = {
+  id: '1',
+  contactButtonUrl: 'mailto:marius.bc@ik.me',
+  createdAt: new Date(),
+  updatedAt: new Date(),
+};
+
 export default function Home() {
   const words = ["Développeur", "Musicien", "Passionné", "SysAdmin", "Créatif", "DevOps"];
   const [currentWordIndex, setCurrentWordIndex] = useState(0);
@@ -39,41 +82,12 @@ export default function Home() {
         const iconsData = await iconsResponse.json();
         const configData = await configResponse.json();
         
-        setDockIcons(iconsData);
-        setSiteConfig(configData);
+        setDockIcons(Array.isArray(iconsData) && iconsData.length > 0 ? iconsData : fallbackDockIcons);
+        setSiteConfig(configData ?? fallbackSiteConfig);
       } catch (error) {
         console.error('Error loading site data:', error);
-        // Fallback to default values
-        setDockIcons([
-          {
-            id: '1',
-            name: 'GitHub',
-            iconName: 'Github',
-            url: 'https://github.com/ItsMariusBC',
-            tooltip: 'GitHub',
-            order: 1,
-            isActive: true,
-            createdAt: new Date(),
-            updatedAt: new Date(),
-          },
-          {
-            id: '2',
-            name: 'LinkedIn',
-            iconName: 'Linkedin',
-            url: 'https://www.linkedin.com/in/marius-biziere-couzinet-1054822b4/',
-            tooltip: 'LinkedIn',
-            order: 2,
-            isActive: true,
-            createdAt: new Date(),
-            updatedAt: new Date(),
-          },
-        ]);
-        setSiteConfig({
-          id: '1',
-          contactButtonUrl: 'mailto:marius.bc@ik.me',
-          createdAt: new Date(),
-          updatedAt: new Date(),
-        });
+        setDockIcons(fallbackDockIcons);
+        setSiteConfig(fallbackSiteConfig);
       } finally {
         setLoading(false);
       }
