@@ -210,6 +210,12 @@ export default function AdminDashboard() {
     }
   }, [session]);
 
+  useEffect(() => {
+    if (status !== 'loading' && !session) {
+      router.push('/admin');
+    }
+  }, [session, status, router]);
+
   const handleLogout = async () => {
     await signOut({ redirect: false });
     router.push('/admin');
@@ -337,7 +343,6 @@ export default function AdminDashboard() {
   }
 
   if (!session) {
-    router.push('/admin');
     return null;
   }
 

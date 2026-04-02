@@ -37,6 +37,12 @@ export default function AdminSignup() {
     checkAdminExists();
   }, [router]);
 
+  useEffect(() => {
+    if (session) {
+      router.push('/admin/dashboard');
+    }
+  }, [session, router]);
+
   if (status === 'loading' || adminExists === null) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-[#0f1116] via-[#1a1b26] to-[#0f1116] flex items-center justify-center">
@@ -60,7 +66,6 @@ export default function AdminSignup() {
   }
 
   if (session) {
-    router.push('/admin/dashboard');
     return null;
   }
 
