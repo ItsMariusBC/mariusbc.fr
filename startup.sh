@@ -5,18 +5,24 @@ set -eu
 echo "Starting portfolio deployment..."
 
 PRISMA="node ./node_modules/prisma/build/index.js"
+DB_PATH="/app/data/portfolio.db"
 
-# Push schema to SQLite (creates the file if it doesn't exist)
+# Apply schema changes without data loss.
+# prisma db push only adds/modifies — it never drops tables
+# unless the schema has breaking changes.
 echo "Applying database schema..."
-$PRISMA db push
+$PRISMA db push --skip-generate
 echo "Database schema up to date"
 
-# Seed only when explicitly requested.
+# Seed only on first run (empty database) or when explicitly requested.
 if [ "${SEED_ON_STARTUP:-false}" = "true" ]; then
-  echo "Seeding database..."
+  echo "Seeding database (forced)..."
   $PRISMA db seed || echo "Seeding skipped (data may already exist)"
+elif [ ! -s "$DB_PATH" ]; then
+  echo "Empty database detected, seeding..."
+  $PRISMA db seed || echo "Seeding failed, continuing anyway"
 else
-  echo "Seeding skipped (set SEED_ON_STARTUP=true to enable)"
+  echo "Database already contains data, skipping seed"
 fi
 
 echo "Startup complete - launching app"
