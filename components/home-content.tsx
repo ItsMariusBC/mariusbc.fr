@@ -66,6 +66,7 @@ export function HomeContent({ config }: { config: SiteConfig }) {
 
           {/* ROLE CYCLE — crossfade only */}
           <p
+            aria-live="polite"
             className="mt-4 text-xl md:text-3xl font-medium tracking-tight text-bone transition-opacity duration-300"
             style={{ opacity: visible ? 1 : 0 }}
           >
@@ -79,7 +80,7 @@ export function HomeContent({ config }: { config: SiteConfig }) {
           <button
             type="button"
             onClick={handleContactClick}
-            className="inline-flex items-center bg-bone text-burgundy border border-bone px-7 py-3 text-sm font-bold uppercase tracking-[0.08em] transition-colors hover:bg-burgundy hover:text-bone"
+            className="inline-flex items-center bg-bone text-burgundy border border-bone px-7 py-3 text-sm font-bold uppercase tracking-[0.08em] transition-colors hover:bg-burgundy hover:text-bone focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bone focus-visible:ring-offset-2 focus-visible:ring-offset-burgundy"
           >
             Me contacter
           </button>
@@ -94,10 +95,10 @@ export function HomeContent({ config }: { config: SiteConfig }) {
             type="button"
             onClick={() => handleLinkClick(link.url)}
             aria-label={link.tooltip}
-            className="group flex w-full items-center justify-between border-b border-bone/20 px-1 py-4 text-bone uppercase tracking-[0.08em] text-[clamp(1.25rem,4vw,2rem)] transition-colors hover:bg-bone hover:text-burgundy"
+            className="group flex w-full items-center justify-between border-b border-bone/20 px-1 py-4 text-bone uppercase tracking-[0.08em] text-[clamp(1.25rem,4vw,2rem)] transition-colors hover:bg-bone hover:text-burgundy focus-visible:outline-none focus-visible:bg-bone focus-visible:text-burgundy active:bg-bone active:text-burgundy"
           >
             <span className="font-medium">{link.name.toUpperCase()}</span>
-            <span aria-hidden="true" className="text-bone/60 transition-colors group-hover:text-burgundy">
+            <span aria-hidden="true" className="text-bone/60 transition-colors group-hover:text-burgundy group-focus-visible:text-burgundy group-active:text-burgundy">
               ↗
             </span>
           </button>
