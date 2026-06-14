@@ -6,6 +6,8 @@ interface NoiseProps {
   patternScaleY?: number;
   patternRefreshInterval?: number;
   patternAlpha?: number;
+  // Grain tint [r,g,b]. Default bone — reads well on the burgundy ground.
+  color?: [number, number, number];
 }
 
 const Noise: React.FC<NoiseProps> = ({
@@ -13,7 +15,8 @@ const Noise: React.FC<NoiseProps> = ({
   patternScaleX = 1,
   patternScaleY = 1,
   patternRefreshInterval = 2,
-  patternAlpha = 15
+  patternAlpha = 15,
+  color = [231, 228, 216]
 }) => {
   const grainRef = useRef<HTMLCanvasElement | null>(null);
 
@@ -42,12 +45,13 @@ const Noise: React.FC<NoiseProps> = ({
       const imageData = ctx.createImageData(canvasSize, canvasSize);
       const data = imageData.data;
 
+      const [r, g, b] = color;
       for (let i = 0; i < data.length; i += 4) {
-        const value = Math.random() * 255;
-        data[i] = value;
-        data[i + 1] = value;
-        data[i + 2] = value;
-        data[i + 3] = patternAlpha;
+        // Fixed tint, randomized alpha → colored grain that reads on the bg.
+        data[i] = r;
+        data[i + 1] = g;
+        data[i + 2] = b;
+        data[i + 3] = Math.random() * patternAlpha;
       }
 
       ctx.putImageData(imageData, 0, 0);
