@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, type ReactNode } from 'react';
+import { useState, useEffect, type CSSProperties, type ReactNode } from 'react';
 import TextPressure from '@/components/text-pressure';
 import FallingText from '@/components/falling-text';
 import Noise from '@/components/noise';
@@ -12,10 +12,23 @@ const TAGLINE =
   'Développeur fullstack & DevOps, ingénieur UI/UX — IT de bout en bout.';
 const HIGHLIGHTS = ['fullstack', 'DevOps', 'UI/UX', 'IT'];
 
-// DEBUG: draw the image-trail clear zone (72% x 80%, centered). Trail spawns
-// OUTSIDE this box. Set to false to hide. Keep in sync with image-trail.tsx
-// (_clearHalfW = 0.36 → 72% width, _clearHalfH = 0.40 → 80% height).
-const DEBUG_TRAIL_ZONE = true;
+// DEBUG: outline every layer in a distinct color + draw the image-trail clear
+// zone + show a legend. Set to false to remove all debug visuals.
+const DEBUG = true;
+const dbg = (color: string): CSSProperties | undefined =>
+  DEBUG ? { outline: `2px solid ${color}`, outlineOffset: '-2px' } : undefined;
+
+// Color legend (kept in sync with the outlines below).
+const LEGEND: [string, string][] = [
+  ['#a3e635', 'Clear zone — no trail inside'],
+  ['#f97316', 'Image trail layer (full screen)'],
+  ['#3b82f6', 'Noise layer (full screen)'],
+  ['#ec4899', 'Content padding box'],
+  ['#22d3ee', 'Main (centering area)'],
+  ['#a855f7', 'Center cluster (MARIUS + tagline)'],
+  ['#facc15', 'MARIUS box'],
+  ['#ef4444', 'Tagline box'],
+];
 
 function prefersReducedMotion() {
   return (
@@ -36,8 +49,8 @@ export function HomeContent({ config }: { config: SiteConfig }) {
   // MARIUS wordmark, centered. The tagline hangs absolutely below it so it never
   // pushes the wordmark off the vertical center of the screen.
   const centerCluster: ReactNode = (
-    <div className="relative flex flex-col items-center text-center">
-      <div aria-hidden="true" className="mx-auto aspect-[4/1] w-[min(88vw,46rem)]">
+    <div className="relative flex flex-col items-center text-center" style={dbg('#a855f7')}>
+      <div aria-hidden="true" className="mx-auto aspect-[4/1] w-[min(88vw,46rem)]" style={dbg('#facc15')}>
         {enhanced ? (
           <TextPressure
             text="Marius"
@@ -56,7 +69,7 @@ export function HomeContent({ config }: { config: SiteConfig }) {
         )}
       </div>
 
-      <div className="absolute left-1/2 top-full w-full max-w-2xl -translate-x-1/2 px-4">
+      <div className="absolute left-1/2 top-full w-full max-w-2xl -translate-x-1/2 px-4" style={dbg('#ef4444')}>
         {enhanced ? (
           <div className="mx-auto mt-1 h-44 w-full font-sans font-medium md:h-60">
             <FallingText
@@ -79,37 +92,50 @@ export function HomeContent({ config }: { config: SiteConfig }) {
     <div className="relative min-h-screen overflow-hidden bg-burgundy text-bone">
       <h1 className="sr-only">Marius — Développeur, Musicien, SysAdmin</h1>
 
-      {/* DEBUG — image-trail clear zone (trail spawns OUTSIDE this box) */}
-      {DEBUG_TRAIL_ZONE && (
-        <div
-          aria-hidden="true"
-          className="pointer-events-none fixed left-1/2 top-1/2 z-50 h-[80%] w-[72%] -translate-x-1/2 -translate-y-1/2 border-2 border-dashed border-lime-400"
-        >
-          <span className="absolute left-1 top-1 bg-lime-400 px-1 text-[10px] font-bold text-black">
-            CLEAR ZONE — trail outside
-          </span>
-        </div>
+      {/* DEBUG overlays */}
+      {DEBUG && (
+        <>
+          {/* image-trail clear zone (72% x 80%, centered) — trail spawns OUTSIDE */}
+          <div
+            aria-hidden="true"
+            className="pointer-events-none fixed left-1/2 top-1/2 z-50 h-[80%] w-[72%] -translate-x-1/2 -translate-y-1/2 border-2 border-dashed border-lime-400"
+          >
+            <span className="absolute left-1 top-1 bg-lime-400 px-1 text-[10px] font-bold text-black">
+              CLEAR ZONE — trail outside
+            </span>
+          </div>
+
+          {/* color legend */}
+          <div className="pointer-events-none fixed bottom-2 left-2 z-50 space-y-1 bg-black/70 p-2 text-[10px] text-white">
+            {LEGEND.map(([color, label]) => (
+              <div key={color} className="flex items-center gap-2">
+                <span className="inline-block h-2 w-4" style={{ backgroundColor: color }} />
+                {label}
+              </div>
+            ))}
+          </div>
+        </>
       )}
 
       {/* NOISE — subtle grain, non-interactive */}
       {enhanced && (
-        <div aria-hidden="true" className="pointer-events-none absolute inset-0 z-0 opacity-[0.05]">
+        <div aria-hidden="true" className="pointer-events-none absolute inset-0 z-0 opacity-[0.05]" style={dbg('#3b82f6')}>
           <Noise patternAlpha={14} />
         </div>
       )}
 
-      {/* IMAGE TRAIL — admin image URLs trailing the cursor near the edges only.
-          Listens on window; edge-band gated inside the component. Behind content
-          (z-0) + pointer-events-none so it never blocks anything. */}
+      {/* IMAGE TRAIL — admin image URLs trailing the cursor outside the clear zone.
+          Listens on window; gated inside the component. Behind content (z-0) +
+          pointer-events-none so it never blocks anything. */}
       {enhanced && config.images.length > 0 && (
-        <div aria-hidden="true" className="pointer-events-none fixed inset-0 z-0">
+        <div aria-hidden="true" className="pointer-events-none fixed inset-0 z-0" style={dbg('#f97316')}>
           <ImageTrail items={config.images} variant={1} />
         </div>
       )}
 
       {/* CONTENT — MARIUS dead-center, nothing else */}
-      <div className="relative z-10 flex min-h-screen flex-col p-6 md:p-10">
-        <main className="flex flex-1 items-center justify-center">
+      <div className="relative z-10 flex min-h-screen flex-col p-6 md:p-10" style={dbg('#ec4899')}>
+        <main className="flex flex-1 items-center justify-center" style={dbg('#22d3ee')}>
           {enhanced ? (
             <ClickSpark sparkColor="#E7E4D8" sparkCount={10} sparkRadius={24}>
               {centerCluster}
