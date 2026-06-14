@@ -1,13 +1,16 @@
 @import "tailwindcss";
 
 @theme {
-  --animate-sparkle: sparkle 1s ease-in-out infinite;
+  --color-burgundy: #8E0320;
+  --color-bone: #E7E4D8;
+  --font-sans: var(--font-archivo), ui-sans-serif, system-ui, sans-serif;
+}
 
-  @keyframes sparkle {
-    0% { transform: scale(0) rotate(0deg); opacity: 0; }
-    50% { transform: scale(1) rotate(90deg); opacity: 0.7; }
-    100% { transform: scale(0) rotate(180deg); opacity: 0; }
-  }
+body {
+  background-color: var(--color-burgundy);
+  color: var(--color-bone);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
 }
 
 .sr-only {
