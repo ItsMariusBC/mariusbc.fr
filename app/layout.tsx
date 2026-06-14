@@ -1,6 +1,5 @@
 import type { Metadata } from 'next'
 import './globals.css'
-import { AuthProvider } from '@/components/auth-provider'
 
 export const metadata: Metadata = {
   title: 'Marius - Portfolio',
@@ -33,9 +32,7 @@ export default function RootLayout({
   return (
     <html lang="fr">
       <body>
-        <AuthProvider>
-          {children}
-        </AuthProvider>
+        {children}
       </body>
     </html>
   )

@@ -1,0 +1,8 @@
+{
+  "contactUrl": "mailto:marius.bc@ik.me",
+  "links": [
+    { "id": "github", "name": "GitHub", "icon": "Github", "url": "https://github.com/ItsMariusBC", "tooltip": "GitHub" },
+    { "id": "linkedin", "name": "LinkedIn", "icon": "Linkedin", "url": "https://www.linkedin.com/in/marius-bzcn/", "tooltip": "LinkedIn" },
+    { "id": "instagram", "name": "Instagram", "icon": "Instagram", "url": "https://www.instagram.com/marius.bzc", "tooltip": "Instagram" }
+  ]
+}
