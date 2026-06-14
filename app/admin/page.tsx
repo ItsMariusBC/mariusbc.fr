@@ -24,19 +24,22 @@ export default function AdminLogin() {
   }
 
   return (
-    <div className="min-h-screen bg-[#0f1116] flex items-center justify-center p-4">
-      <form onSubmit={onSubmit} className="w-full max-w-sm flex flex-col gap-4 bg-white/5 border border-white/10 rounded-2xl p-8">
-        <h1 className="text-white text-xl font-semibold">Admin</h1>
+    <div className="min-h-screen bg-burgundy flex items-center justify-center p-4">
+      <form onSubmit={onSubmit} className="w-full max-w-sm flex flex-col gap-6 border border-bone/20 p-8">
+        <h1 className="text-bone text-2xl font-bold uppercase tracking-[0.08em]">Admin</h1>
         <input
           type="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           placeholder="Mot de passe"
           autoFocus
-          className="bg-white/10 border border-white/20 rounded-lg px-4 py-2 text-white outline-none"
+          className="bg-transparent border border-bone/30 px-4 py-2 text-bone placeholder:text-bone/60 outline-none focus:ring-2 focus:ring-bone focus:border-bone transition-colors"
         />
-        {error && <p className="text-red-400 text-sm">{error}</p>}
-        <button disabled={loading} className="bg-[rgb(157,122,255)] text-white rounded-lg px-4 py-2 font-medium disabled:opacity-50">
+        {error && <p className="text-bone text-sm">{error}</p>}
+        <button
+          disabled={loading}
+          className="bg-bone text-burgundy uppercase tracking-[0.08em] font-bold px-4 py-2 border border-bone hover:bg-burgundy hover:text-bone transition-colors disabled:opacity-50"
+        >
           {loading ? '…' : 'Se connecter'}
         </button>
       </form>

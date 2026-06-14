@@ -47,38 +47,38 @@ export function DashboardEditor({ initial }: { initial: SiteConfig }) {
   }
 
   return (
-    <div className="min-h-screen bg-[#0f1116] text-white p-6">
+    <div className="min-h-screen bg-burgundy text-bone p-6">
       <div className="max-w-2xl mx-auto flex flex-col gap-6">
         <div className="flex items-center justify-between">
-          <h1 className="text-xl font-semibold">Dashboard</h1>
-          <button onClick={logout} className="text-sm text-white/60 hover:text-white">Déconnexion</button>
+          <h1 className="text-2xl font-bold uppercase tracking-[0.08em]">Dashboard</h1>
+          <button onClick={logout} className="text-sm uppercase tracking-[0.08em] text-bone/60 hover:text-bone transition-colors">Déconnexion</button>
         </div>
 
-        <label className="flex flex-col gap-1">
-          <span className="text-sm text-white/60">URL de contact</span>
-          <input value={contactUrl} onChange={(e) => setContactUrl(e.target.value)} className="bg-white/10 border border-white/20 rounded-lg px-3 py-2 outline-none" />
+        <label className="flex flex-col gap-2">
+          <span className="text-xs uppercase tracking-[0.08em] text-bone/60">URL de contact</span>
+          <input value={contactUrl} onChange={(e) => setContactUrl(e.target.value)} className="bg-transparent border border-bone/30 px-3 py-2 text-bone placeholder:text-bone/60 outline-none focus:ring-2 focus:ring-bone focus:border-bone transition-colors" />
         </label>
 
         <div className="flex flex-col gap-3">
           {links.map((l, i) => (
-            <div key={l.id} className="flex flex-wrap gap-2 items-center bg-white/5 border border-white/10 rounded-xl p-3">
-              <select value={l.icon} onChange={(e) => update(i, { icon: e.target.value })} className="bg-white/10 border border-white/20 rounded px-2 py-1">
+            <div key={l.id} className="flex flex-wrap gap-2 items-center border border-bone/20 p-3">
+              <select value={l.icon} onChange={(e) => update(i, { icon: e.target.value })} className="bg-transparent border border-bone/30 text-bone px-2 py-1 outline-none focus:ring-2 focus:ring-bone focus:border-bone transition-colors [&>option]:bg-burgundy [&>option]:text-bone">
                 {ICON_OPTIONS.map((o) => <option key={o.name} value={o.name}>{o.label}</option>)}
               </select>
-              <input value={l.name} onChange={(e) => update(i, { name: e.target.value })} placeholder="Nom" className="bg-white/10 border border-white/20 rounded px-2 py-1 flex-1 min-w-24" />
-              <input value={l.url} onChange={(e) => update(i, { url: e.target.value })} placeholder="URL" className="bg-white/10 border border-white/20 rounded px-2 py-1 flex-1 min-w-32" />
-              <input value={l.tooltip} onChange={(e) => update(i, { tooltip: e.target.value })} placeholder="Tooltip" className="bg-white/10 border border-white/20 rounded px-2 py-1 w-28" />
-              <button onClick={() => move(i, -1)} className="px-2 text-white/60 hover:text-white">↑</button>
-              <button onClick={() => move(i, 1)} className="px-2 text-white/60 hover:text-white">↓</button>
-              <button onClick={() => remove(i)} className="px-2 text-red-400 hover:text-red-300">✕</button>
+              <input value={l.name} onChange={(e) => update(i, { name: e.target.value })} placeholder="Nom" className="bg-transparent border border-bone/30 text-bone placeholder:text-bone/60 px-2 py-1 flex-1 min-w-24 outline-none focus:ring-2 focus:ring-bone focus:border-bone transition-colors" />
+              <input value={l.url} onChange={(e) => update(i, { url: e.target.value })} placeholder="URL" className="bg-transparent border border-bone/30 text-bone placeholder:text-bone/60 px-2 py-1 flex-1 min-w-32 outline-none focus:ring-2 focus:ring-bone focus:border-bone transition-colors" />
+              <input value={l.tooltip} onChange={(e) => update(i, { tooltip: e.target.value })} placeholder="Tooltip" className="bg-transparent border border-bone/30 text-bone placeholder:text-bone/60 px-2 py-1 w-28 outline-none focus:ring-2 focus:ring-bone focus:border-bone transition-colors" />
+              <button onClick={() => move(i, -1)} className="px-2 text-bone/60 hover:text-bone transition-colors">↑</button>
+              <button onClick={() => move(i, 1)} className="px-2 text-bone/60 hover:text-bone transition-colors">↓</button>
+              <button onClick={() => remove(i)} className="px-2 text-bone/60 hover:text-bone transition-colors">✕</button>
             </div>
           ))}
         </div>
 
         <div className="flex gap-3 items-center">
-          <button onClick={add} className="bg-white/10 border border-white/20 rounded-lg px-4 py-2">+ Ajouter un lien</button>
-          <button onClick={save} className="bg-[rgb(157,122,255)] rounded-lg px-4 py-2 font-medium">Enregistrer</button>
-          {status && <span className="text-sm text-white/60">{status}</span>}
+          <button onClick={add} className="border border-bone/30 text-bone uppercase tracking-[0.08em] px-4 py-2 hover:bg-bone hover:text-burgundy transition-colors">+ Ajouter un lien</button>
+          <button onClick={save} className="bg-bone text-burgundy uppercase tracking-[0.08em] font-bold border border-bone px-4 py-2 hover:bg-burgundy hover:text-bone transition-colors">Enregistrer</button>
+          {status && <span className="text-sm text-bone/60">{status}</span>}
         </div>
       </div>
     </div>
