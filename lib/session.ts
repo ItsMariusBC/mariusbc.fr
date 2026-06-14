@@ -29,6 +29,7 @@ export async function verifySessionToken(token: string | undefined): Promise<boo
 }
 
 export async function checkPassword(plain: string): Promise<boolean> {
+  if (typeof plain !== 'string' || plain.length === 0 || plain.length > 1000) return false;
   const hash = process.env.ADMIN_PASSWORD_HASH;
   if (!hash) return false;
   return bcrypt.compare(plain, hash);
