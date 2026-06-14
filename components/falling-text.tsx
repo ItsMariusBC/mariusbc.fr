@@ -36,7 +36,7 @@ const FallingText: React.FC<FallingTextProps> = ({
       .map(word => {
         const isHighlighted = highlightWords.some(hw => word.startsWith(hw));
         return `<span
-          class="inline-block mx-[2px] select-none ${isHighlighted ? 'text-cyan-500 font-bold' : ''}"
+          class="inline-block mx-[2px] select-none ${isHighlighted ? 'font-black underline decoration-bone/50 underline-offset-4' : ''}"
         >
           ${word}
         </span>`;
