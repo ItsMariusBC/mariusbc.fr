@@ -54,56 +54,87 @@ class ImageItem {
   private getRect() {
     this.rect = this.DOM.el.getBoundingClientRect();
   }
+
+  public destroy() {
+    window.removeEventListener('resize', this.resize);
+    gsap.killTweensOf(this.DOM.el);
+  }
 }
 
-class ImageTrailVariant1 {
-  private container: HTMLDivElement;
-  private DOM: { el: HTMLDivElement };
-  private images: ImageItem[];
-  private imagesTotal: number;
-  private imgPosition: number;
-  private zIndexVal: number;
-  private activeImagesCount: number;
-  private isIdle: boolean;
-  private threshold: number;
-  private mousePos: { x: number; y: number };
-  private lastMousePos: { x: number; y: number };
-  private cacheMousePos: { x: number; y: number };
+/**
+ * Shared lifecycle for every ImageTrail variant: window pointer listeners
+ * (passive, so touchmove never blocks scroll), a single stoppable rAF loop,
+ * and full teardown on unmount (listeners removed, rAF cancelled, items and
+ * tweens killed). Without this the listeners + render() loop leaked on every
+ * remount and kept running in the background forever.
+ */
+abstract class ImageTrailBase {
+  protected container: HTMLDivElement;
+  protected images: ImageItem[];
+  protected mousePos = { x: 0, y: 0 };
+  protected lastMousePos = { x: 0, y: 0 };
+  protected cacheMousePos = { x: 0, y: 0 };
+  private rafId = 0;
+  private stopped = false;
+  private handlePointerMove: (ev: MouseEvent | TouchEvent) => void;
+  private initRender: (ev: MouseEvent | TouchEvent) => void;
 
   constructor(container: HTMLDivElement) {
     this.container = container;
-    this.DOM = { el: container };
     this.images = [...container.querySelectorAll('.content__img')].map(img => new ImageItem(img as HTMLDivElement));
-    this.imagesTotal = this.images.length;
-    this.imgPosition = 0;
-    this.zIndexVal = 1;
-    this.activeImagesCount = 0;
-    this.isIdle = true;
-    this.threshold = 80;
-    this.mousePos = { x: 0, y: 0 };
-    this.lastMousePos = { x: 0, y: 0 };
-    this.cacheMousePos = { x: 0, y: 0 };
 
-    const handlePointerMove = (ev: MouseEvent | TouchEvent) => {
+    this.handlePointerMove = (ev: MouseEvent | TouchEvent) => {
       const rect = this.container.getBoundingClientRect();
       this.mousePos = getLocalPointerPos(ev, rect);
     };
-    window.addEventListener('mousemove', handlePointerMove);
-    window.addEventListener('touchmove', handlePointerMove);
+    window.addEventListener('mousemove', this.handlePointerMove, { passive: true });
+    window.addEventListener('touchmove', this.handlePointerMove, { passive: true });
 
-    const initRender = (ev: MouseEvent | TouchEvent) => {
+    this.initRender = (ev: MouseEvent | TouchEvent) => {
       const rect = this.container.getBoundingClientRect();
       this.mousePos = getLocalPointerPos(ev, rect);
       this.cacheMousePos = { ...this.mousePos };
-      requestAnimationFrame(() => this.render());
-      window.removeEventListener('mousemove', initRender as EventListener);
-      window.removeEventListener('touchmove', initRender as EventListener);
+      this.loop();
+      window.removeEventListener('mousemove', this.initRender as EventListener);
+      window.removeEventListener('touchmove', this.initRender as EventListener);
     };
-    window.addEventListener('mousemove', initRender as EventListener);
-    window.addEventListener('touchmove', initRender as EventListener);
+    window.addEventListener('mousemove', this.initRender as EventListener, { passive: true });
+    window.addEventListener('touchmove', this.initRender as EventListener, { passive: true });
   }
 
-  private render() {
+  private loop = () => {
+    if (this.stopped) return;
+    this.render();
+    this.rafId = requestAnimationFrame(this.loop);
+  };
+
+  protected abstract render(): void;
+
+  public destroy() {
+    this.stopped = true;
+    if (this.rafId) cancelAnimationFrame(this.rafId);
+    window.removeEventListener('mousemove', this.handlePointerMove);
+    window.removeEventListener('touchmove', this.handlePointerMove);
+    window.removeEventListener('mousemove', this.initRender as EventListener);
+    window.removeEventListener('touchmove', this.initRender as EventListener);
+    this.images.forEach(img => img.destroy());
+  }
+}
+
+class ImageTrailVariant1 extends ImageTrailBase {
+  private imagesTotal: number;
+  private imgPosition = 0;
+  private zIndexVal = 1;
+  private activeImagesCount = 0;
+  private isIdle = true;
+  private threshold = 80;
+
+  constructor(container: HTMLDivElement) {
+    super(container);
+    this.imagesTotal = this.images.length;
+  }
+
+  protected render() {
     const distance = getMouseDistance(this.mousePos, this.lastMousePos);
     this.cacheMousePos.x = lerp(this.cacheMousePos.x, this.mousePos.x, 0.1);
     this.cacheMousePos.y = lerp(this.cacheMousePos.y, this.mousePos.y, 0.1);
@@ -123,7 +154,6 @@ class ImageTrailVariant1 {
     if (this.isIdle && this.zIndexVal !== 1) {
       this.zIndexVal = 1;
     }
-    requestAnimationFrame(() => this.render());
   }
 
   private showNextImage() {
@@ -1258,8 +1288,10 @@ export default function ImageTrail({ items = [], variant = 1 }: ImageTrailProps)
   useEffect(() => {
     if (!containerRef.current) return;
     const Cls = variantMap[variant] || variantMap[1];
-    new Cls(containerRef.current);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    const instance = new Cls(containerRef.current);
+    return () => {
+      (instance as { destroy?: () => void }).destroy?.();
+    };
   }, [variant, items]);
 
   return (
