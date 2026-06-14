@@ -4,10 +4,12 @@ import { ICON_MAP } from '@/lib/dock-icons';
 import defaultConfig from '@/config.default.json';
 
 export type LinkItem = { id: string; name: string; icon: string; url: string; tooltip: string };
-export type SiteConfig = { contactUrl: string; links: LinkItem[] };
+export type SiteConfig = { contactUrl: string; links: LinkItem[]; images: string[] };
 
 const SAFE_SCHEMES = ['https:', 'http:', 'mailto:', 'tel:'];
+const IMG_SCHEMES = ['https:', 'http:'];
 const MAX_LINKS = 30;
+const MAX_IMAGES = 12;
 const LIMITS = { name: 100, tooltip: 200, url: 2000, id: 64 };
 
 function isSafeUrl(value: string): boolean {
@@ -47,7 +49,20 @@ export function validateConfig(input: unknown): SiteConfig {
     };
   });
 
-  return { contactUrl, links };
+  const rawImages = obj.images ?? [];
+  if (!Array.isArray(rawImages)) throw new Error('images must be an array');
+  if (rawImages.length > MAX_IMAGES) throw new Error('too many images');
+  const images: string[] = rawImages.map((v) => {
+    const url = str(v, LIMITS.url);
+    try {
+      if (!IMG_SCHEMES.includes(new URL(url).protocol)) throw new Error('bad');
+    } catch {
+      throw new Error('invalid image url');
+    }
+    return url;
+  });
+
+  return { contactUrl, links, images };
 }
 
 function configPath(): string {
