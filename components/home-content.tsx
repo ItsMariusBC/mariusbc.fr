@@ -119,8 +119,8 @@ export function HomeContent({ config }: { config: SiteConfig }) {
 
       {/* NOISE — subtle grain, non-interactive */}
       {enhanced && (
-        <div aria-hidden="true" className="pointer-events-none absolute inset-0 z-0 opacity-[0.05]" style={dbg('#3b82f6')}>
-          <Noise patternAlpha={14} />
+        <div aria-hidden="true" className="pointer-events-none absolute inset-0 z-0 opacity-[0.12]" style={dbg('#3b82f6')}>
+          <Noise patternAlpha={30} />
         </div>
       )}
 
