@@ -57,10 +57,17 @@ export function HomeContent({ config }: { config: SiteConfig }) {
       </header>
 
       {/* BODY — two-column editorial grid */}
-      <main className="mt-10 grid flex-1 grid-cols-1 gap-y-14 md:mt-12 md:grid-cols-12 md:gap-x-8">
+      <main className="mt-10 grid flex-1 grid-cols-1 gap-y-12 md:mt-12 md:grid-cols-12 md:gap-x-10">
         {/* LEFT — identity, anchored to the bottom of the column */}
-        <section className="flex flex-col md:col-span-8">
-          <Pinwheel className="h-10 w-10 text-bone md:h-12 md:w-12" />
+        <section className="flex flex-col md:col-span-7">
+          <div className="flex items-center gap-4">
+            <Pinwheel className="h-10 w-10 text-bone md:h-12 md:w-12" />
+            <span className="text-[0.7rem] uppercase tracking-[0.18em] text-bone/50 md:text-xs">
+              Studio
+              <br />
+              Personnel
+            </span>
+          </div>
 
           <div className="mt-auto pt-16">
             <p className="text-[0.7rem] uppercase tracking-[0.18em] text-bone/60 md:text-xs">
@@ -69,7 +76,7 @@ export function HomeContent({ config }: { config: SiteConfig }) {
 
             <h2
               aria-hidden="true"
-              className="mt-3 font-black uppercase leading-[0.85] tracking-tight text-[clamp(3.5rem,12vw,10rem)]"
+              className="mt-3 font-black uppercase leading-[0.82] tracking-tight text-[clamp(3.5rem,12vw,10.5rem)]"
             >
               Marius
             </h2>
@@ -94,42 +101,58 @@ export function HomeContent({ config }: { config: SiteConfig }) {
           </div>
         </section>
 
-        {/* RIGHT — numbered link index, anchored to the bottom */}
-        <nav
-          aria-label="Liens sociaux"
-          className="flex flex-col md:col-span-4 md:justify-end"
-        >
-          <div className="mb-4 flex items-baseline justify-between text-[0.7rem] uppercase tracking-[0.18em] text-bone/60 md:text-xs">
-            <span>Index</span>
-            <span>({count})</span>
-          </div>
+        {/* RIGHT — portrait (fills the upper void) over the numbered link index */}
+        <div className="flex flex-col gap-8 md:col-span-5">
+          {/* PHOTO SLOT — replace the inner placeholder with:
+              <img src="/images/portrait.jpg" alt="Marius" className="absolute inset-0 h-full w-full object-cover grayscale contrast-110" />
+              (drop the file in public/images/, CSP already allows 'self') */}
+          <figure className="relative aspect-[4/5] w-full overflow-hidden border border-bone/30 bg-bone/5 md:aspect-auto md:flex-1 md:min-h-[280px]">
+            <figcaption className="absolute left-3 top-3 text-[0.65rem] uppercase tracking-[0.18em] text-bone/50">
+              Fig. 01 — Portrait
+            </figcaption>
+            <span className="absolute inset-0 flex items-center justify-center text-[0.7rem] uppercase tracking-[0.22em] text-bone/35">
+              Photo
+            </span>
+            {/* crosshair to read as an image placeholder */}
+            <span aria-hidden="true" className="absolute inset-0">
+              <span className="absolute left-1/2 top-1/2 h-px w-8 -translate-x-1/2 -translate-y-1/2 bg-bone/20" />
+              <span className="absolute left-1/2 top-1/2 h-8 w-px -translate-x-1/2 -translate-y-1/2 bg-bone/20" />
+            </span>
+          </figure>
 
-          <ul className="border-t border-bone/20">
-            {config.links.map((link, i) => (
-              <li key={link.id}>
-                <button
-                  type="button"
-                  onClick={() => handleLinkClick(link.url)}
-                  aria-label={link.tooltip}
-                  className="group flex w-full items-baseline gap-4 border-b border-bone/20 px-1 py-4 uppercase tracking-[0.06em] text-bone transition-colors hover:bg-bone hover:text-burgundy focus-visible:bg-bone focus-visible:text-burgundy focus-visible:outline-none"
-                >
-                  <span className="text-[0.7rem] tabular-nums text-bone/50 transition-colors group-hover:text-burgundy/70 group-focus-visible:text-burgundy/70">
-                    {String(i + 1).padStart(2, '0')}
-                  </span>
-                  <span className="flex-1 text-left text-[clamp(1.25rem,2.6vw,1.75rem)] font-medium">
-                    {link.name.toUpperCase()}
-                  </span>
-                  <span
-                    aria-hidden="true"
-                    className="text-bone/60 transition-colors group-hover:text-burgundy group-focus-visible:text-burgundy"
+          <nav aria-label="Liens sociaux">
+            <div className="mb-4 flex items-baseline justify-between text-[0.7rem] uppercase tracking-[0.18em] text-bone/60 md:text-xs">
+              <span>Index</span>
+              <span>({count})</span>
+            </div>
+
+            <ul className="border-t border-bone/20">
+              {config.links.map((link, i) => (
+                <li key={link.id}>
+                  <button
+                    type="button"
+                    onClick={() => handleLinkClick(link.url)}
+                    aria-label={link.tooltip}
+                    className="group flex w-full items-baseline gap-4 border-b border-bone/20 px-1 py-4 uppercase tracking-[0.06em] text-bone transition-colors hover:bg-bone hover:text-burgundy focus-visible:bg-bone focus-visible:text-burgundy focus-visible:outline-none"
                   >
-                    ↗
-                  </span>
-                </button>
-              </li>
-            ))}
-          </ul>
-        </nav>
+                    <span className="text-[0.7rem] tabular-nums text-bone/50 transition-colors group-hover:text-burgundy/70 group-focus-visible:text-burgundy/70">
+                      {String(i + 1).padStart(2, '0')}
+                    </span>
+                    <span className="flex-1 text-left text-[clamp(1.25rem,2.6vw,1.75rem)] font-medium">
+                      {link.name.toUpperCase()}
+                    </span>
+                    <span
+                      aria-hidden="true"
+                      className="text-bone/60 transition-colors group-hover:text-burgundy group-focus-visible:text-burgundy"
+                    >
+                      ↗
+                    </span>
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        </div>
       </main>
 
       {/* FOOTER — spec block, full width */}
