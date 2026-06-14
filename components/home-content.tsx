@@ -189,7 +189,7 @@ export function HomeContent({ config }: { config: SiteConfig }) {
       </div>
 
       {enhanced ? (
-        <div className="mx-auto mt-6 h-32 w-full max-w-2xl">
+        <div className="mx-auto mt-6 h-56 w-full max-w-2xl">
           <FallingText
             text={TAGLINE}
             highlightWords={HIGHLIGHTS}
