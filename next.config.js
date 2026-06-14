@@ -1,6 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  serverExternalPackages: ['bcryptjs', 'better-sqlite3'],
+  serverExternalPackages: ['bcryptjs'],
   turbopack: {},
   output: 'standalone',
   async headers() {
