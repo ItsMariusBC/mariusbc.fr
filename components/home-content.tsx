@@ -117,11 +117,19 @@ export function HomeContent({ config }: { config: SiteConfig }) {
         </>
       )}
 
-      {/* NOISE — subtle grain, non-interactive */}
+      {/* NOISE — bone grain, full screen but masked to the OUTSIDE zone only */}
       {enhanced && (
-        <div aria-hidden="true" className="pointer-events-none absolute inset-0 z-0 opacity-[0.7]" style={dbg('#3b82f6')}>
-          <Noise patternAlpha={50} />
-        </div>
+        <>
+          <div aria-hidden="true" className="pointer-events-none absolute inset-0 z-0 opacity-[0.7]" style={dbg('#3b82f6')}>
+            <Noise patternAlpha={50} />
+          </div>
+          {/* mask: burgundy rectangle over the center (same 72%x80% clear zone)
+              → hides the noise inside the box, leaving it only in the margins */}
+          <div
+            aria-hidden="true"
+            className="pointer-events-none fixed left-1/2 top-1/2 z-0 h-[80%] w-[72%] -translate-x-1/2 -translate-y-1/2 bg-burgundy"
+          />
+        </>
       )}
 
       {/* IMAGE TRAIL — admin image URLs trailing the cursor outside the clear zone.
