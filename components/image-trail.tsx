@@ -139,15 +139,16 @@ class ImageTrailVariant1 extends ImageTrailBase {
     this.cacheMousePos.x = lerp(this.cacheMousePos.x, this.mousePos.x, 0.1);
     this.cacheMousePos.y = lerp(this.cacheMousePos.y, this.mousePos.y, 0.1);
 
+    // Spawn images only OUTSIDE a centered clear zone (the content box around
+    // MARIUS) — i.e. everywhere in the surrounding margins.
     const _w = this.container.offsetWidth;
     const _h = this.container.offsetHeight;
-    const _band = 140;
-    const _nearEdge =
-      this.mousePos.x < _band ||
-      this.mousePos.y < _band ||
-      this.mousePos.x > _w - _band ||
-      this.mousePos.y > _h - _band;
-    if (distance > this.threshold && _nearEdge) {
+    const _clearHalfW = _w * 0.36; // ~72% of width kept clear
+    const _clearHalfH = _h * 0.4; // ~80% of height kept clear
+    const _outside =
+      Math.abs(this.mousePos.x - _w / 2) > _clearHalfW ||
+      Math.abs(this.mousePos.y - _h / 2) > _clearHalfH;
+    if (distance > this.threshold && _outside) {
       this.showNextImage();
       this.lastMousePos = { ...this.mousePos };
     }
@@ -261,15 +262,16 @@ class ImageTrailVariant2 {
     this.cacheMousePos.x = lerp(this.cacheMousePos.x, this.mousePos.x, 0.1);
     this.cacheMousePos.y = lerp(this.cacheMousePos.y, this.mousePos.y, 0.1);
 
+    // Spawn images only OUTSIDE a centered clear zone (the content box around
+    // MARIUS) — i.e. everywhere in the surrounding margins.
     const _w = this.container.offsetWidth;
     const _h = this.container.offsetHeight;
-    const _band = 140;
-    const _nearEdge =
-      this.mousePos.x < _band ||
-      this.mousePos.y < _band ||
-      this.mousePos.x > _w - _band ||
-      this.mousePos.y > _h - _band;
-    if (distance > this.threshold && _nearEdge) {
+    const _clearHalfW = _w * 0.36; // ~72% of width kept clear
+    const _clearHalfH = _h * 0.4; // ~80% of height kept clear
+    const _outside =
+      Math.abs(this.mousePos.x - _w / 2) > _clearHalfW ||
+      Math.abs(this.mousePos.y - _h / 2) > _clearHalfH;
+    if (distance > this.threshold && _outside) {
       this.showNextImage();
       this.lastMousePos = { ...this.mousePos };
     }
@@ -396,15 +398,16 @@ class ImageTrailVariant3 {
     this.cacheMousePos.x = lerp(this.cacheMousePos.x, this.mousePos.x, 0.1);
     this.cacheMousePos.y = lerp(this.cacheMousePos.y, this.mousePos.y, 0.1);
 
+    // Spawn images only OUTSIDE a centered clear zone (the content box around
+    // MARIUS) — i.e. everywhere in the surrounding margins.
     const _w = this.container.offsetWidth;
     const _h = this.container.offsetHeight;
-    const _band = 140;
-    const _nearEdge =
-      this.mousePos.x < _band ||
-      this.mousePos.y < _band ||
-      this.mousePos.x > _w - _band ||
-      this.mousePos.y > _h - _band;
-    if (distance > this.threshold && _nearEdge) {
+    const _clearHalfW = _w * 0.36; // ~72% of width kept clear
+    const _clearHalfH = _h * 0.4; // ~80% of height kept clear
+    const _outside =
+      Math.abs(this.mousePos.x - _w / 2) > _clearHalfW ||
+      Math.abs(this.mousePos.y - _h / 2) > _clearHalfH;
+    if (distance > this.threshold && _outside) {
       this.showNextImage();
       this.lastMousePos = { ...this.mousePos };
     }
@@ -531,15 +534,16 @@ class ImageTrailVariant4 {
 
   private render() {
     const distance = getMouseDistance(this.mousePos, this.lastMousePos);
+    // Spawn images only OUTSIDE a centered clear zone (the content box around
+    // MARIUS) — i.e. everywhere in the surrounding margins.
     const _w = this.container.offsetWidth;
     const _h = this.container.offsetHeight;
-    const _band = 140;
-    const _nearEdge =
-      this.mousePos.x < _band ||
-      this.mousePos.y < _band ||
-      this.mousePos.x > _w - _band ||
-      this.mousePos.y > _h - _band;
-    if (distance > this.threshold && _nearEdge) {
+    const _clearHalfW = _w * 0.36; // ~72% of width kept clear
+    const _clearHalfH = _h * 0.4; // ~80% of height kept clear
+    const _outside =
+      Math.abs(this.mousePos.x - _w / 2) > _clearHalfW ||
+      Math.abs(this.mousePos.y - _h / 2) > _clearHalfH;
+    if (distance > this.threshold && _outside) {
       this.showNextImage();
       this.lastMousePos = { ...this.mousePos };
     }
@@ -691,15 +695,16 @@ class ImageTrailVariant5 {
 
   private render() {
     const distance = getMouseDistance(this.mousePos, this.lastMousePos);
+    // Spawn images only OUTSIDE a centered clear zone (the content box around
+    // MARIUS) — i.e. everywhere in the surrounding margins.
     const _w = this.container.offsetWidth;
     const _h = this.container.offsetHeight;
-    const _band = 140;
-    const _nearEdge =
-      this.mousePos.x < _band ||
-      this.mousePos.y < _band ||
-      this.mousePos.x > _w - _band ||
-      this.mousePos.y > _h - _band;
-    if (distance > this.threshold && _nearEdge) {
+    const _clearHalfW = _w * 0.36; // ~72% of width kept clear
+    const _clearHalfH = _h * 0.4; // ~80% of height kept clear
+    const _outside =
+      Math.abs(this.mousePos.x - _w / 2) > _clearHalfW ||
+      Math.abs(this.mousePos.y - _h / 2) > _clearHalfH;
+    if (distance > this.threshold && _outside) {
       this.showNextImage();
       this.lastMousePos = { ...this.mousePos };
     }
@@ -842,15 +847,16 @@ class ImageTrailVariant6 {
     this.cacheMousePos.x = lerp(this.cacheMousePos.x, this.mousePos.x, 0.3);
     this.cacheMousePos.y = lerp(this.cacheMousePos.y, this.mousePos.y, 0.3);
 
+    // Spawn images only OUTSIDE a centered clear zone (the content box around
+    // MARIUS) — i.e. everywhere in the surrounding margins.
     const _w = this.container.offsetWidth;
     const _h = this.container.offsetHeight;
-    const _band = 140;
-    const _nearEdge =
-      this.mousePos.x < _band ||
-      this.mousePos.y < _band ||
-      this.mousePos.x > _w - _band ||
-      this.mousePos.y > _h - _band;
-    if (distance > this.threshold && _nearEdge) {
+    const _clearHalfW = _w * 0.36; // ~72% of width kept clear
+    const _clearHalfH = _h * 0.4; // ~80% of height kept clear
+    const _outside =
+      Math.abs(this.mousePos.x - _w / 2) > _clearHalfW ||
+      Math.abs(this.mousePos.y - _h / 2) > _clearHalfH;
+    if (distance > this.threshold && _outside) {
       this.showNextImage();
       this.lastMousePos = { ...this.mousePos };
     }
@@ -1020,15 +1026,16 @@ class ImageTrailVariant7 {
     this.cacheMousePos.x = lerp(this.cacheMousePos.x, this.mousePos.x, 0.3);
     this.cacheMousePos.y = lerp(this.cacheMousePos.y, this.mousePos.y, 0.3);
 
+    // Spawn images only OUTSIDE a centered clear zone (the content box around
+    // MARIUS) — i.e. everywhere in the surrounding margins.
     const _w = this.container.offsetWidth;
     const _h = this.container.offsetHeight;
-    const _band = 140;
-    const _nearEdge =
-      this.mousePos.x < _band ||
-      this.mousePos.y < _band ||
-      this.mousePos.x > _w - _band ||
-      this.mousePos.y > _h - _band;
-    if (distance > this.threshold && _nearEdge) {
+    const _clearHalfW = _w * 0.36; // ~72% of width kept clear
+    const _clearHalfH = _h * 0.4; // ~80% of height kept clear
+    const _outside =
+      Math.abs(this.mousePos.x - _w / 2) > _clearHalfW ||
+      Math.abs(this.mousePos.y - _h / 2) > _clearHalfH;
+    if (distance > this.threshold && _outside) {
       this.showNextImage();
       this.lastMousePos = { ...this.mousePos };
     }
@@ -1159,15 +1166,16 @@ class ImageTrailVariant8 {
     this.cacheMousePos.x = lerp(this.cacheMousePos.x, this.mousePos.x, 0.1);
     this.cacheMousePos.y = lerp(this.cacheMousePos.y, this.mousePos.y, 0.1);
 
+    // Spawn images only OUTSIDE a centered clear zone (the content box around
+    // MARIUS) — i.e. everywhere in the surrounding margins.
     const _w = this.container.offsetWidth;
     const _h = this.container.offsetHeight;
-    const _band = 140;
-    const _nearEdge =
-      this.mousePos.x < _band ||
-      this.mousePos.y < _band ||
-      this.mousePos.x > _w - _band ||
-      this.mousePos.y > _h - _band;
-    if (distance > this.threshold && _nearEdge) {
+    const _clearHalfW = _w * 0.36; // ~72% of width kept clear
+    const _clearHalfH = _h * 0.4; // ~80% of height kept clear
+    const _outside =
+      Math.abs(this.mousePos.x - _w / 2) > _clearHalfW ||
+      Math.abs(this.mousePos.y - _h / 2) > _clearHalfH;
+    if (distance > this.threshold && _outside) {
       this.showNextImage();
       this.lastMousePos = { ...this.mousePos };
     }
