@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "eslint app/ components/ lib/ --ext .ts,.tsx,.js,.jsx",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "gen:password": "node scripts/hash-password.mjs"
   },
   "dependencies": {
     "@radix-ui/react-tooltip": "^1.2.9",

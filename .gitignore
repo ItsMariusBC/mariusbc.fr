@@ -31,3 +31,6 @@ dist-ssr
 tsconfig.tsbuildinfo
 CLAUDE.md
 docs/
+
+# Local editable config (runtime)
+data/
