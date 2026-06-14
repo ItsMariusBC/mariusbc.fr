@@ -14,7 +14,7 @@ const HIGHLIGHTS = ['fullstack', 'DevOps', 'UI/UX', 'IT'];
 
 // DEBUG: outline every layer in a distinct color + draw the image-trail clear
 // zone + show a legend. Set to false to remove all debug visuals.
-const DEBUG = true;
+const DEBUG = false;
 const dbg = (color: string): CSSProperties | undefined =>
   DEBUG ? { outline: `2px solid ${color}`, outlineOffset: '-2px' } : undefined;
 
