@@ -57,6 +57,7 @@ function configPath(): string {
     : path.join(process.cwd(), 'data', 'config.json');
 }
 
+// process-global config cache — single-writer/single-process use only
 let cache: SiteConfig | null = null;
 
 export async function getConfig(): Promise<SiteConfig> {
@@ -65,7 +66,10 @@ export async function getConfig(): Promise<SiteConfig> {
   try {
     const raw = await fs.readFile(file, 'utf8');
     cache = validateConfig(JSON.parse(raw));
-  } catch {
+  } catch (err) {
+    if ((err as NodeJS.ErrnoException).code !== 'ENOENT') {
+      console.error('[config] unreadable/corrupt config, falling back to default:', err);
+    }
     cache = validateConfig(defaultConfig);
     await fs.mkdir(path.dirname(file), { recursive: true }).catch(() => {});
     await fs.writeFile(file, JSON.stringify(cache, null, 2), 'utf8').catch(() => {});

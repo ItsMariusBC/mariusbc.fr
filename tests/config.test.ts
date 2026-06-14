@@ -25,4 +25,15 @@ describe('validateConfig', () => {
   it('rejects non-array links', () => {
     expect(() => validateConfig({ contactUrl: 'mailto:a@b.com', links: 'x' })).toThrow();
   });
+  it('rejects data: url', () => {
+    expect(() => validateConfig({ ...good, links: [{ ...good.links[0], url: 'data:text/html,<script>1</script>' }] })).toThrow();
+  });
+  it('rejects more than 30 links', () => {
+    const many = Array.from({ length: 31 }, (_, i) => ({ ...good.links[0], id: String(i) }));
+    expect(() => validateConfig({ ...good, links: many })).toThrow();
+  });
+  it('trims whitespace in fields', () => {
+    const res = validateConfig({ ...good, links: [{ ...good.links[0], name: '  GitHub  ' }] });
+    expect(res.links[0].name).toBe('GitHub');
+  });
 });
