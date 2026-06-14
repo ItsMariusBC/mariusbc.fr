@@ -12,6 +12,11 @@ const TAGLINE =
   'Développeur fullstack & DevOps, ingénieur UI/UX — IT de bout en bout.';
 const HIGHLIGHTS = ['fullstack', 'DevOps', 'UI/UX', 'IT'];
 
+// DEBUG: draw the image-trail clear zone (72% x 80%, centered). Trail spawns
+// OUTSIDE this box. Set to false to hide. Keep in sync with image-trail.tsx
+// (_clearHalfW = 0.36 → 72% width, _clearHalfH = 0.40 → 80% height).
+const DEBUG_TRAIL_ZONE = true;
+
 function prefersReducedMotion() {
   return (
     typeof window !== 'undefined' &&
@@ -73,6 +78,18 @@ export function HomeContent({ config }: { config: SiteConfig }) {
   return (
     <div className="relative min-h-screen overflow-hidden bg-burgundy text-bone">
       <h1 className="sr-only">Marius — Développeur, Musicien, SysAdmin</h1>
+
+      {/* DEBUG — image-trail clear zone (trail spawns OUTSIDE this box) */}
+      {DEBUG_TRAIL_ZONE && (
+        <div
+          aria-hidden="true"
+          className="pointer-events-none fixed left-1/2 top-1/2 z-50 h-[80%] w-[72%] -translate-x-1/2 -translate-y-1/2 border-2 border-dashed border-lime-400"
+        >
+          <span className="absolute left-1 top-1 bg-lime-400 px-1 text-[10px] font-bold text-black">
+            CLEAR ZONE — trail outside
+          </span>
+        </div>
+      )}
 
       {/* NOISE — subtle grain, non-interactive */}
       {enhanced && (
