@@ -11,16 +11,25 @@ export function HomeContent({ config }: { config: SiteConfig }) {
   const [visible, setVisible] = useState(true);
 
   useEffect(() => {
+    // Respect prefers-reduced-motion: freeze the cycle entirely, show one role.
+    const reduceMotion =
+      typeof window !== 'undefined' &&
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduceMotion) return;
+
+    let swap: ReturnType<typeof setTimeout>;
     const interval = setInterval(() => {
       // Crossfade: fade out, swap the word, fade back in. No scramble.
       setVisible(false);
-      const swap = setTimeout(() => {
+      swap = setTimeout(() => {
         setRoleIndex((prev) => (prev + 1) % ROLES.length);
         setVisible(true);
       }, 220);
-      return () => clearTimeout(swap);
     }, 3000);
-    return () => clearInterval(interval);
+    return () => {
+      clearInterval(interval);
+      clearTimeout(swap);
+    };
   }, []);
 
   const handleContactClick = () => {
@@ -64,9 +73,9 @@ export function HomeContent({ config }: { config: SiteConfig }) {
             MARIUS
           </h2>
 
-          {/* ROLE CYCLE — crossfade only */}
+          {/* ROLE CYCLE — crossfade only. Not announced: full role list lives in the sr-only h1. */}
           <p
-            aria-live="polite"
+            aria-hidden="true"
             className="mt-4 text-xl md:text-3xl font-medium tracking-tight text-bone transition-opacity duration-300"
             style={{ opacity: visible ? 1 : 0 }}
           >
