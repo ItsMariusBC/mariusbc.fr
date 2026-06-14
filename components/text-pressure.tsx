@@ -66,6 +66,12 @@ const TextPressure: React.FC<TextPressureProps> = ({
 
   const mouseRef = useRef({ x: 0, y: 0 });
   const cursorRef = useRef({ x: 0, y: 0 });
+  // Cached letter geometry (viewport coords). Recomputed on layout/resize only —
+  // never per animation frame — so the hover loop does zero forced reflows.
+  const geomRef = useRef<{ centers: { x: number; y: number }[]; maxDist: number }>({
+    centers: [],
+    maxDist: 1,
+  });
 
   const [fontSize, setFontSize] = useState(minFontSize);
   const [scaleY, setScaleY] = useState(1);
@@ -122,6 +128,16 @@ const TextPressure: React.FC<TextPressureProps> = ({
         setScaleY(yRatio);
         setLineHeight(yRatio);
       }
+
+      // Cache letter centers + spread once, after the new font size is painted.
+      geomRef.current = {
+        centers: spansRef.current.map((s) => {
+          if (!s) return { x: 0, y: 0 };
+          const r = s.getBoundingClientRect();
+          return { x: r.x + r.width / 2, y: r.y + r.height / 2 };
+        }),
+        maxDist: textRect.width / 2 || 1,
+      };
     });
   }, [chars.length, minFontSize, scale]);
 
@@ -135,21 +151,18 @@ const TextPressure: React.FC<TextPressureProps> = ({
   useEffect(() => {
     let rafId: number;
     const animate = () => {
-      mouseRef.current.x += (cursorRef.current.x - mouseRef.current.x) / 15;
-      mouseRef.current.y += (cursorRef.current.y - mouseRef.current.y) / 15;
+      // Snappier follow (was /15 → visible lag). ~1/5 catches up in a few frames.
+      mouseRef.current.x += (cursorRef.current.x - mouseRef.current.x) / 5;
+      mouseRef.current.y += (cursorRef.current.y - mouseRef.current.y) / 5;
 
-      if (titleRef.current) {
-        const titleRect = titleRef.current.getBoundingClientRect();
-        const maxDist = titleRect.width / 2;
+      {
+        const { centers, maxDist } = geomRef.current;
 
-        spansRef.current.forEach(span => {
+        spansRef.current.forEach((span, i) => {
           if (!span) return;
 
-          const rect = span.getBoundingClientRect();
-          const charCenter = {
-            x: rect.x + rect.width / 2,
-            y: rect.y + rect.height / 2
-          };
+          const charCenter = centers[i];
+          if (!charCenter) return;
 
           const d = dist(mouseRef.current, charCenter);
 
