@@ -53,18 +53,18 @@ export function HomeContent({ config }: { config: SiteConfig }) {
 
       <div className="absolute left-1/2 top-full w-full max-w-2xl -translate-x-1/2 px-4">
         {enhanced ? (
-          <div className="mx-auto mt-6 h-40 w-full md:h-56">
+          <div className="mx-auto mt-1 h-44 w-full font-sans font-medium md:h-60">
             <FallingText
               text={TAGLINE}
               highlightWords={HIGHLIGHTS}
               trigger="hover"
               backgroundColor="transparent"
               gravity={0.6}
-              fontSize="clamp(0.85rem,1.6vw,1.1rem)"
+              fontSize="clamp(1.15rem,2.4vw,1.75rem)"
             />
           </div>
         ) : (
-          <p className="mx-auto mt-6 max-w-2xl text-center text-bone/80">{TAGLINE}</p>
+          <p className="mx-auto mt-1 max-w-2xl text-center text-lg font-medium md:text-2xl text-bone/80">{TAGLINE}</p>
         )}
       </div>
     </div>
