@@ -48,42 +48,49 @@ export function HomeContent({ config }: { config: SiteConfig }) {
 
   // MARIUS wordmark, centered. The tagline hangs absolutely below it so it never
   // pushes the wordmark off the vertical center of the screen.
-  const centerCluster: ReactNode = (
-    <div className="relative flex flex-col items-center text-center" style={dbg('#a855f7')}>
-      <div aria-hidden="true" className="mx-auto aspect-[4/1] w-[min(88vw,46rem)]" style={dbg('#facc15')}>
-        {enhanced ? (
-          <TextPressure
-            text="Marius"
-            fontFamily="Archivo VF"
-            fontUrl="/fonts/archivo-var.woff2"
-            width={false}
-            weight
-            italic={false}
-            textColor="#E7E4D8"
-            minFontSize={48}
-          />
-        ) : (
-          <span className="block text-center font-black uppercase leading-[0.82] tracking-tight text-[clamp(3.5rem,12vw,9rem)]">
-            Marius
-          </span>
-        )}
-      </div>
+  // Stop a click from reaching the ClickSpark wrapper → no spark on MARIUS / tagline.
+  const noSpark = (e: React.MouseEvent) => e.stopPropagation();
 
-      <div className="absolute left-1/2 top-full w-full max-w-2xl -translate-x-1/2 px-4" style={dbg('#ef4444')}>
-        {enhanced ? (
-          <div className="mx-auto mt-1 h-44 w-full font-sans font-medium md:h-60">
-            <FallingText
-              text={TAGLINE}
-              highlightWords={HIGHLIGHTS}
-              trigger="hover"
-              backgroundColor="transparent"
-              gravity={0.6}
-              fontSize="clamp(1.15rem,2.4vw,1.75rem)"
+  const centerCluster: ReactNode = (
+    <div className="relative flex h-full w-full items-center justify-center text-center">
+      <div className="relative" style={dbg('#a855f7')}>
+        {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions, jsx-a11y/click-events-have-key-events */}
+        <div aria-hidden="true" onClick={noSpark} className="mx-auto aspect-[4/1] w-[min(88vw,46rem)]" style={dbg('#facc15')}>
+          {enhanced ? (
+            <TextPressure
+              text="Marius"
+              fontFamily="Archivo VF"
+              fontUrl="/fonts/archivo-var.woff2"
+              width={false}
+              weight
+              italic={false}
+              textColor="#E7E4D8"
+              minFontSize={48}
             />
-          </div>
-        ) : (
-          <p className="mx-auto mt-1 max-w-2xl text-center text-lg font-medium md:text-2xl text-bone/80">{TAGLINE}</p>
-        )}
+          ) : (
+            <span className="block text-center font-black uppercase leading-[0.82] tracking-tight text-[clamp(3.5rem,12vw,9rem)]">
+              Marius
+            </span>
+          )}
+        </div>
+
+        {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions, jsx-a11y/click-events-have-key-events */}
+        <div onClick={noSpark} className="absolute left-1/2 top-full w-full max-w-2xl -translate-x-1/2 px-4" style={dbg('#ef4444')}>
+          {enhanced ? (
+            <div className="mx-auto mt-1 h-44 w-full font-sans font-medium md:h-60">
+              <FallingText
+                text={TAGLINE}
+                highlightWords={HIGHLIGHTS}
+                trigger="hover"
+                backgroundColor="transparent"
+                gravity={0.6}
+                fontSize="clamp(1.15rem,2.4vw,1.75rem)"
+              />
+            </div>
+          ) : (
+            <p className="mx-auto mt-1 max-w-2xl text-center text-lg font-medium md:text-2xl text-bone/80">{TAGLINE}</p>
+          )}
+        </div>
       </div>
     </div>
   );
@@ -145,9 +152,14 @@ export function HomeContent({ config }: { config: SiteConfig }) {
       <div className="relative z-10 flex min-h-screen flex-col p-6 md:p-10" style={dbg('#ec4899')}>
         <main className="flex flex-1 items-center justify-center" style={dbg('#22d3ee')}>
           {enhanced ? (
-            <ClickSpark sparkColor="#E7E4D8" sparkCount={10} sparkRadius={24}>
-              {centerCluster}
-            </ClickSpark>
+            // Spark area = the center clear zone (72vw x 80vh). Margins (noise/trail
+            // zone) sit outside it → no spark there. MARIUS + tagline stopPropagation
+            // → no spark on them either.
+            <div className="relative h-[80vh] w-[72vw]">
+              <ClickSpark sparkColor="#E7E4D8" sparkCount={10} sparkRadius={24}>
+                {centerCluster}
+              </ClickSpark>
+            </div>
           ) : (
             centerCluster
           )}
