@@ -3,6 +3,13 @@ const nextConfig = {
   serverExternalPackages: ['bcryptjs'],
   turbopack: {},
   output: 'standalone',
+  // Turbopack's on-disk dev cache (.next/dev SST files) corrupts on abrupt kills
+  // or when another process touches .next — causing "Unable to write SST file" /
+  // "compaction already active" / missing-chunk 500s. Disabling it trades a bit of
+  // restart speed for a stable dev server.
+  experimental: {
+    turbopackFileSystemCacheForDev: false,
+  },
   async headers() {
     const securityHeaders = [
       { key: 'X-Content-Type-Options', value: 'nosniff' },
