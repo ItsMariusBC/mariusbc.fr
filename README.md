@@ -1,81 +1,78 @@
-# Portfolio Marius
+# mariusbc.fr
 
-Portfolio personnel avec interface d'administration pour gerer le bouton de contact, les icones du dock et les analytics de clic.
+Site vitrine personnel (style Linktree) avec un petit panneau d'administration
+pour éditer le bouton de contact et les liens du dock.
 
 ## Stack
 
-- Next.js 16 App Router
+- Next.js 16 (App Router, sortie `standalone`)
 - React 19 + TypeScript
-- NextAuth Credentials
-- Prisma 7 avec adaptateur SQLite `better-sqlite3`
 - Tailwind CSS 4
+- Auth admin : `jose` (JWT) + `bcryptjs`, un seul admin
+- Stockage : fichier `config.json` (pas de base de données)
+- Tests : Vitest
 
-## Installation locale
+## Architecture
 
-1. Installer les dependances:
+- Les données (URL de contact + liens) vivent dans un seul fichier JSON
+  (`config.json`) sur un volume. Pas de base de données.
+- `config.default.json` sert de configuration initiale : copiée vers le volume
+  au premier démarrage si le fichier est absent.
+- L'admin unique s'authentifie par mot de passe (haché en variable
+  d'environnement) ; la session est un cookie JWT signé, httpOnly.
 
-```bash
-npm install
 ```
-
-2. Initialiser l'environnement:
-
-```bash
-cp .env.example .env
+app/            Routes App Router (accueil, /admin, /api/*)
+components/     Composants UI (home-content, dashboard-editor, magicui/*)
+lib/            config.ts (stockage), session.ts (auth), dock-icons.ts, utils.ts
+tests/          Tests Vitest
+scripts/        hash-password.mjs
+public/         Assets statiques
 ```
-
-3. Generer Prisma et preparer la base:
-
-```bash
-npm run db:generate
-npm run db:push
-npm run db:seed
-```
-
-4. Lancer le serveur:
-
-```bash
-npm run dev
-```
-
-L'application est ensuite disponible sur `http://localhost:3000`.
-
-## Commandes utiles
-
-```bash
-npm run dev        # developpement
-npm run lint       # lint ESLint
-npm run build      # build production
-npm run start      # demarrer la build
-
-npm run db:generate
-npm run db:push
-npm run db:migrate
-npm run db:seed
-npm run db:studio
-```
-
-## Base de donnees
-
-La base locale utilise SQLite via `DATABASE_URL="file:./prisma/dev.db"`. Le schema Prisma couvre:
-
-- `User`, `Account`, `Session`, `VerificationToken` pour NextAuth
-- `SiteConfig` pour le bouton de contact
-- `DockIcon` pour les liens du dock
-- `ClickAnalytics` pour les statistiques
-
-## Admin
-
-- Premiere creation: `http://localhost:3000/admin/signup`
-- Connexion: `http://localhost:3000/admin`
-- Dashboard: `http://localhost:3000/admin/dashboard`
-
-Le premier compte cree devient administrateur. Les routes d'administration exigent ensuite une session admin.
 
 ## Variables d'environnement
 
-Voir [.env.example](/Users/marius.b/Desktop/Perso/Code/mariusbc.fr/.env.example) pour les valeurs attendues, notamment:
+Voir `.env.example`.
 
-- `DATABASE_URL`
-- `NEXTAUTH_SECRET`
-- `NEXTAUTH_URL`
+| Variable | Rôle |
+|---|---|
+| `AUTH_SECRET` | Secret de signature de session. `openssl rand -base64 32` |
+| `ADMIN_PASSWORD_HASH` | Hash bcrypt du mot de passe admin. `npm run gen:password "motdepasse"` |
+| `CONFIG_PATH` | Chemin du `config.json`. Défaut prod : `/app/data/config.json` |
+
+## Développement
+
+```bash
+npm install
+cp .env.example .env.local        # puis renseigner AUTH_SECRET + ADMIN_PASSWORD_HASH
+npm run gen:password "motdepasse" # copier le hash dans .env.local
+npm run dev
+```
+
+- Accueil : http://localhost:3000
+- Admin : http://localhost:3000/admin
+
+## Scripts
+
+| Commande | Effet |
+|---|---|
+| `npm run dev` | Serveur de développement |
+| `npm run build` | Build de production |
+| `npm run start` | Sert le build |
+| `npm run lint` | ESLint |
+| `npm test` | Tests Vitest |
+| `npm run gen:password "..."` | Génère un hash bcrypt pour `ADMIN_PASSWORD_HASH` |
+
+## Déploiement (Docker)
+
+```bash
+docker build -t mariusbc .
+docker run -p 3000:3000 \
+  -e AUTH_SECRET=... \
+  -e ADMIN_PASSWORD_HASH=... \
+  -v mariusbc-data:/app/data \
+  mariusbc
+```
+
+Monter un volume sur `/app/data` pour persister `config.json` entre les
+redéploiements. Définir `AUTH_SECRET` et `ADMIN_PASSWORD_HASH`.
