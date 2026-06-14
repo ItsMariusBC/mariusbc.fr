@@ -9,7 +9,17 @@ export function DashboardEditor({ initial }: { initial: SiteConfig }) {
   const router = useRouter();
   const [contactUrl, setContactUrl] = useState(initial.contactUrl);
   const [links, setLinks] = useState<LinkItem[]>(initial.links);
+  const [images, setImages] = useState<string[]>(initial.images ?? []);
+  const [imgInput, setImgInput] = useState('');
   const [status, setStatus] = useState('');
+
+  function addImage() {
+    const v = imgInput.trim();
+    if (v) { setImages((p) => [...p, v]); setImgInput(''); }
+  }
+  function removeImage(i: number) {
+    setImages((p) => p.filter((_, idx) => idx !== i));
+  }
 
   function update(i: number, patch: Partial<LinkItem>) {
     setLinks((prev) => prev.map((l, idx) => (idx === i ? { ...l, ...patch } : l)));
@@ -35,7 +45,7 @@ export function DashboardEditor({ initial }: { initial: SiteConfig }) {
     const res = await fetch('/api/config', {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ contactUrl, links }),
+      body: JSON.stringify({ contactUrl, links, images }),
     });
     if (res.ok) { setStatus('Enregistré'); router.refresh(); }
     else setStatus('Erreur (vérifie les URLs / champs)');
@@ -73,6 +83,28 @@ export function DashboardEditor({ initial }: { initial: SiteConfig }) {
               <button onClick={() => remove(i)} className="px-2 text-bone/60 hover:text-bone transition-colors">✕</button>
             </div>
           ))}
+        </div>
+
+        {/* IMAGES / SITES — external URLs for the home Image Trail */}
+        <div className="flex flex-col gap-3 border-t border-bone/20 pt-6">
+          <span className="text-xs uppercase tracking-[0.08em] text-bone/60">Images / sites (URLs)</span>
+          {images.map((src, i) => (
+            <div key={i} className="flex items-center gap-3 border border-bone/20 p-2">
+              <span className="text-[0.7rem] tabular-nums text-bone/50">{String(i + 1).padStart(2, '0')}</span>
+              <span className="flex-1 truncate text-sm text-bone/80">{src}</span>
+              <button onClick={() => removeImage(i)} className="px-2 text-bone/60 hover:text-bone transition-colors">✕</button>
+            </div>
+          ))}
+          <div className="flex gap-2">
+            <input
+              value={imgInput}
+              onChange={(e) => setImgInput(e.target.value)}
+              onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); addImage(); } }}
+              placeholder="https://…/screenshot.jpg"
+              className="flex-1 bg-transparent border border-bone/30 text-bone placeholder:text-bone/60 px-3 py-2 outline-none focus:ring-2 focus:ring-bone focus:border-bone transition-colors"
+            />
+            <button onClick={addImage} className="border border-bone/30 text-bone uppercase tracking-[0.08em] px-4 py-2 hover:bg-bone hover:text-burgundy transition-colors">Ajouter</button>
+          </div>
         </div>
 
         <div className="flex gap-3 items-center">
