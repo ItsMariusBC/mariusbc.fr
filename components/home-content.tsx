@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { Pinwheel } from '@/components/pinwheel';
+import TextPressure from '@/components/text-pressure';
 import type { SiteConfig } from '@/lib/config';
 
 const ROLES = ['Développeur', 'Musicien', 'Passionné', 'SysAdmin', 'Créatif', 'DevOps'];
@@ -30,7 +31,14 @@ export function HomeContent({ config }: { config: SiteConfig }) {
   const [visible, setVisible] = useState(true);
   const [clock, setClock] = useState('');
   const [copied, setCopied] = useState(false);
+  const [enhanced, setEnhanced] = useState(false);
   const contactRef = useRef<HTMLButtonElement>(null);
+
+  // Enable the interactive Text Pressure wordmark only with motion + after mount
+  // (server + first paint render the static fallback → no hydration mismatch).
+  useEffect(() => {
+    if (!prefersReducedMotion()) setEnhanced(true);
+  }, []);
 
   // Role auto-cycle (frozen under reduced-motion).
   useEffect(() => {
@@ -142,12 +150,25 @@ export function HomeContent({ config }: { config: SiteConfig }) {
               Hello moi c&apos;est
             </p>
 
-            <h2
-              aria-hidden="true"
-              className="mt-3 font-black uppercase leading-[0.82] tracking-tight text-[clamp(3.5rem,12vw,10.5rem)]"
-            >
-              Marius
-            </h2>
+            {/* MARIUS — interactive Text Pressure (ReactBits), Archivo variable font */}
+            <div aria-hidden="true" className="mt-3 aspect-[4/1] w-full">
+              {enhanced ? (
+                <TextPressure
+                  text="Marius"
+                  fontFamily="Archivo VF"
+                  fontUrl="/fonts/archivo-var.woff2"
+                  width={false}
+                  weight
+                  italic={false}
+                  textColor="#E7E4D8"
+                  minFontSize={48}
+                />
+              ) : (
+                <span className="block font-black uppercase leading-[0.82] tracking-tight text-[clamp(3.5rem,12vw,10.5rem)]">
+                  Marius
+                </span>
+              )}
+            </div>
 
             {/* ROLE — auto-cycles; click to advance manually */}
             <button
