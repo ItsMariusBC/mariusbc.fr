@@ -5,6 +5,7 @@ import TextPressure from '@/components/text-pressure';
 import FallingText from '@/components/falling-text';
 import Noise from '@/components/noise';
 import ClickSpark from '@/components/click-spark';
+import ImageTrail from '@/components/image-trail';
 import { InteractiveHoverButton } from '@/components/interactive-hover-button';
 import type { SiteConfig } from '@/lib/config';
 
@@ -226,6 +227,15 @@ export function HomeContent({ config }: { config: SiteConfig }) {
       {enhanced && (
         <div aria-hidden="true" className="pointer-events-none absolute inset-0 z-0 opacity-[0.05]">
           <Noise patternAlpha={14} />
+        </div>
+      )}
+
+      {/* IMAGE TRAIL — admin image URLs trailing the cursor near the edges only.
+          Listens on window; edge-band gated inside the component. Behind content
+          (z-0) + pointer-events-none so it never blocks the buttons. */}
+      {enhanced && config.images.length > 0 && (
+        <div aria-hidden="true" className="pointer-events-none fixed inset-0 z-0">
+          <ImageTrail items={config.images} variant={1} />
         </div>
       )}
 
