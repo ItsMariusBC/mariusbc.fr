@@ -20,29 +20,12 @@ function prefersReducedMotion() {
 }
 
 export function HomeContent({ config }: { config: SiteConfig }) {
-  const [clock, setClock] = useState('');
   const [enhanced, setEnhanced] = useState(false);
 
   // Enable the interactive layers only with motion + after mount
   // (server + first paint render the static fallback → no hydration mismatch).
   useEffect(() => {
     if (!prefersReducedMotion()) setEnhanced(true);
-  }, []);
-
-  // Live Paris clock.
-  useEffect(() => {
-    const tick = () =>
-      setClock(
-        new Intl.DateTimeFormat('fr-FR', {
-          timeZone: 'Europe/Paris',
-          hour: '2-digit',
-          minute: '2-digit',
-          second: '2-digit',
-        }).format(new Date())
-      );
-    tick();
-    const id = setInterval(tick, 1000);
-    return () => clearInterval(id);
   }, []);
 
   // MARIUS wordmark, centered. The tagline hangs absolutely below it so it never
@@ -107,16 +90,8 @@ export function HomeContent({ config }: { config: SiteConfig }) {
         </div>
       )}
 
-      {/* CONTENT */}
+      {/* CONTENT — MARIUS dead-center, nothing else */}
       <div className="relative z-10 flex min-h-screen flex-col p-6 md:p-10">
-        {/* TOP META ROW */}
-        <header className="grid grid-cols-3 items-baseline text-[0.7rem] uppercase tracking-[0.18em] md:text-xs">
-          <span className="justify-self-start">Portfolio</span>
-          <span className="justify-self-center text-center">@marius.bzc</span>
-          <span className="justify-self-end">2026</span>
-        </header>
-
-        {/* CENTER — MARIUS dead-center */}
         <main className="flex flex-1 items-center justify-center">
           {enhanced ? (
             <ClickSpark sparkColor="#E7E4D8" sparkCount={10} sparkRadius={24}>
@@ -126,14 +101,6 @@ export function HomeContent({ config }: { config: SiteConfig }) {
             centerCluster
           )}
         </main>
-
-        {/* FOOTER — spec block + live Paris clock */}
-        <footer className="mt-10 grid grid-cols-1 gap-2 border-t border-bone/20 pt-5 text-[0.7rem] uppercase tracking-[0.18em] text-bone/60 md:grid-cols-2 md:text-xs">
-          <p>Marius BC — Dev · Music · SysAdmin · DevOps</p>
-          <p className="tabular-nums md:justify-self-end">
-            France{clock ? ` — ${clock}` : ''}
-          </p>
-        </footer>
       </div>
     </div>
   );
