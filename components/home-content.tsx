@@ -9,8 +9,8 @@ import ImageTrail from '@/components/image-trail';
 import type { SiteConfig } from '@/lib/config';
 
 const TAGLINE =
-  'Développeur fullstack, DevOps et UI/UX — IT le jour, DJ le soir, rando en nature le week-end.';
-const HIGHLIGHTS = ['fullstack', 'DevOps', 'UI/UX', 'DJ', 'rando'];
+  'Développeur fullstack & DevOps, ingénieur UI/UX — IT de bout en bout.';
+const HIGHLIGHTS = ['fullstack', 'DevOps', 'UI/UX', 'IT'];
 
 function prefersReducedMotion() {
   return (
