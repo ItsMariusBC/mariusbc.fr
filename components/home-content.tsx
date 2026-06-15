@@ -212,7 +212,7 @@ export function HomeContent({ config }: { config: SiteConfig }) {
                 data-reveal="cta"
                 type="button"
                 onClick={(e) => { e.stopPropagation(); handleContactClick(); }}
-                className="group absolute left-1/2 top-[78%] -mt-1 -translate-x-1/2 -translate-y-1/2 overflow-hidden border border-bone px-10 py-4 text-sm font-bold uppercase tracking-[0.2em] text-bone transition-colors duration-300 hover:text-burgundy focus-visible:text-burgundy focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bone focus-visible:ring-offset-4 focus-visible:ring-offset-burgundy"
+                className="group absolute left-1/2 top-[78%] -mt-1.5 -translate-x-1/2 -translate-y-1/2 overflow-hidden border border-bone px-10 py-4 text-sm font-bold uppercase tracking-[0.2em] text-bone transition-colors duration-300 hover:text-burgundy focus-visible:text-burgundy focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bone focus-visible:ring-offset-4 focus-visible:ring-offset-burgundy"
               >
                 <span
                   aria-hidden="true"
