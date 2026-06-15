@@ -214,7 +214,7 @@ export function HomeContent({ config }: { config: SiteConfig }) {
                 onClick={(e) => { e.stopPropagation(); handleContactClick(); }}
                 className="absolute left-1/2 top-[74%] -translate-x-1/2 -translate-y-1/2 border border-bone bg-bone px-12 py-4 text-sm font-bold uppercase tracking-[0.25em] text-burgundy transition-colors duration-300 hover:bg-burgundy hover:text-bone focus-visible:bg-burgundy focus-visible:text-bone focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bone focus-visible:ring-offset-4 focus-visible:ring-offset-burgundy"
               >
-                Me contacter
+                Prendre RDV
               </button>
 
               {/* Social links — bold text-links row, bottom-center */}
