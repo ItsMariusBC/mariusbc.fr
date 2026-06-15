@@ -1,13 +1,14 @@
 # Marius Bizière Couzinet
 
-> Développeur fullstack & DevOps, ingénieur Web et UI/UX, freelance. Fondateur de Klysium (Clyse). Conception, développement et déploiement d'applications web sur mesure, de bout en bout.
+> Développeur fullstack & DevOps, ingénieur Web et UI/UX, freelance. Fondateur de Clyse. Conception, développement et déploiement d'applications web sur mesure, de bout en bout.
 
 ## Identité
 
 - **Nom** : Marius Bizière Couzinet
 - **Alias** : Marius, Marius BC, Marius.BC, Marius Bizière, Marius Couzinet, Bizière, Couzinet
 - **Rôle** : Développeur Fullstack & DevOps · Ingénieur Web · UI/UX · Freelance
-- **Société** : Klysium SAS — aussi connue sous Klysium, Clyse, Clyse Développement
+- **Société actuelle** : Clyse (Clyse Développement)
+- **Ancienne société** : Klysium SAS (Klysium) — en cours de fermeture, référencée ici pour les recherches encore actives
 - **Site** : https://mariusbc.fr
 
 ## Expertise

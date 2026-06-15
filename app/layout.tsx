@@ -11,7 +11,7 @@ const archivo = Archivo({
 
 const TITLE = 'Marius Bizière Couzinet — Développeur Fullstack & DevOps · UI/UX';
 const DESCRIPTION =
-  'Marius Bizière Couzinet (Marius BC) — développeur fullstack & DevOps, ingénieur Web et UI/UX, freelance. Fondateur de Klysium (Clyse).';
+  'Marius Bizière Couzinet (Marius BC) — développeur fullstack & DevOps, ingénieur Web et UI/UX, freelance. Fondateur de Clyse.';
 // Embed (X / Discord / …) description = the site tagline
 const TAGLINE = 'Développeur fullstack & DevOps, ingénieur UI/UX — IT de bout en bout.';
 const COVER = { url: '/imgs/embed/cover.png', width: 814, height: 291, alt: TITLE };
@@ -26,7 +26,7 @@ export const metadata: Metadata = {
   applicationName: 'mariusbc.fr',
   authors: [{ name: 'Marius Bizière Couzinet', url: 'https://mariusbc.fr' }],
   creator: 'Marius Bizière Couzinet',
-  publisher: 'Klysium SAS',
+  publisher: 'Clyse',
   category: 'technology',
   keywords: [
     'Marius', 'Marius BC', 'Marius.BC', 'Marius Bizière Couzinet', 'Marius Biziere Couzinet',

@@ -13,7 +13,7 @@ export default async function Home() {
       {/* Crawlable bio (visually hidden) — natural text for search engines */}
       <p className="sr-only">
         Marius Bizière Couzinet (Marius BC) — développeur fullstack &amp; DevOps,
-        ingénieur Web et UI/UX, freelance IT. Fondateur de Klysium (Clyse).
+        ingénieur Web et UI/UX, freelance IT. Fondateur de Clyse.
         Conception, développement et déploiement d&apos;applications web sur mesure.
       </p>
       <HomeContent config={config} />

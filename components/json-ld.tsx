@@ -23,22 +23,32 @@ export function JsonLd({ config }: { config: SiteConfig }) {
       url: SITE,
       jobTitle: 'Développeur Fullstack & DevOps · Ingénieur Web · UI/UX',
       description:
-        'Développeur Fullstack & DevOps, ingénieur Web et UI/UX, freelance. Fondateur de Klysium (Clyse).',
+        'Développeur Fullstack & DevOps, ingénieur Web et UI/UX, freelance. Fondateur de Clyse.',
       knowsAbout: [
         'Développement Fullstack', 'DevOps', 'Ingénierie Web', 'UI/UX Design',
         'UI', 'UX', 'IT', 'Design', 'Freelance', 'Next.js', 'React', 'TypeScript',
       ],
-      worksFor: { '@id': `${SITE}/#klysium` },
+      worksFor: { '@id': `${SITE}/#clyse` },
       sameAs,
     },
     {
+      // Current company
       '@type': 'Organization',
-      '@id': `${SITE}/#klysium`,
-      name: 'Klysium SAS',
-      alternateName: ['Klysium', 'Clyse', 'Clyse Développement', 'Clyse Developpement'],
+      '@id': `${SITE}/#clyse`,
+      name: 'Clyse',
+      alternateName: ['Clyse Développement', 'Clyse Developpement'],
       url: SITE,
       founder: { '@id': `${SITE}/#marius` },
       sameAs,
+    },
+    {
+      // Former company (Klysium SAS) — winding down, kept so legacy searches still resolve here
+      '@type': 'Organization',
+      '@id': `${SITE}/#klysium`,
+      name: 'Klysium SAS',
+      alternateName: ['Klysium'],
+      url: SITE,
+      founder: { '@id': `${SITE}/#marius` },
     },
     {
       '@type': 'WebSite',
