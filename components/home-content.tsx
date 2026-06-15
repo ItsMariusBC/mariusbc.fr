@@ -207,29 +207,27 @@ export function HomeContent({ config }: { config: SiteConfig }) {
               <ProjectsHint />
 
               {/* Link buttons — big bold text-links, bottom-left */}
-              <nav aria-label="Liens" className="absolute inset-x-0 bottom-8 flex flex-col items-center gap-4 px-4 md:bottom-10">
-                {/* Contact — prominent filled button, on top */}
-                <button
-                  type="button"
-                  onClick={(e) => { e.stopPropagation(); handleContactClick(); }}
-                  className="border border-bone bg-bone px-8 py-3 text-sm font-bold uppercase tracking-[0.12em] text-burgundy transition-colors hover:bg-burgundy hover:text-bone focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bone focus-visible:ring-offset-2 focus-visible:ring-offset-burgundy"
-                >
-                  Contact
-                </button>
+              {/* Contact — prominent filled button, midway between tagline & links */}
+              <button
+                type="button"
+                onClick={(e) => { e.stopPropagation(); handleContactClick(); }}
+                className="absolute left-1/2 top-[72%] -translate-x-1/2 -translate-y-1/2 border border-bone bg-bone px-8 py-3 text-sm font-bold uppercase tracking-[0.12em] text-burgundy transition-colors hover:bg-burgundy hover:text-bone focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bone focus-visible:ring-offset-2 focus-visible:ring-offset-burgundy"
+              >
+                Contact
+              </button>
 
-                {/* Social links — bold text-links row, below */}
-                <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-2">
-                  {config.links.map((l) => (
-                    <button
-                      key={l.id}
-                      type="button"
-                      onClick={(e) => { e.stopPropagation(); handleLinkClick(l.url); }}
-                      className="text-2xl font-black uppercase leading-tight tracking-tight text-bone/45 transition-colors hover:text-bone focus-visible:text-bone focus-visible:outline-none md:text-3xl"
-                    >
-                      {l.name}
-                    </button>
-                  ))}
-                </div>
+              {/* Social links — bold text-links row, bottom-center */}
+              <nav aria-label="Liens" className="absolute inset-x-0 bottom-8 flex flex-wrap items-center justify-center gap-x-8 gap-y-2 px-4 md:bottom-10">
+                {config.links.map((l) => (
+                  <button
+                    key={l.id}
+                    type="button"
+                    onClick={(e) => { e.stopPropagation(); handleLinkClick(l.url); }}
+                    className="text-2xl font-black uppercase leading-tight tracking-tight text-bone/45 transition-colors hover:text-bone focus-visible:text-bone focus-visible:outline-none md:text-3xl"
+                  >
+                    {l.name}
+                  </button>
+                ))}
               </nav>
             </div>
           ) : (
