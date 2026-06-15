@@ -40,43 +40,6 @@ function prefersReducedMotion() {
   );
 }
 
-// DEBUG: live vertical lines + px gap labels (tagline↔Contact, Contact↔links).
-const DEBUG_MEASURE = true;
-
-function GapMeasure() {
-  const [gaps, setGaps] = useState<{ y1: number; y2: number; px: number }[]>([]);
-  useEffect(() => {
-    const measure = () => {
-      const tag = document.querySelector('[data-reveal="tagline"]');
-      const cta = document.querySelector('[data-reveal="cta"]');
-      const links = document.querySelector('nav[aria-label="Liens"]');
-      if (!tag || !cta || !links) return;
-      const t = tag.getBoundingClientRect();
-      const c = cta.getBoundingClientRect();
-      const l = links.getBoundingClientRect();
-      setGaps([
-        { y1: t.bottom, y2: c.top, px: Math.round(c.top - t.bottom) },
-        { y1: c.bottom, y2: l.top, px: Math.round(l.top - c.bottom) },
-      ]);
-    };
-    measure();
-    window.addEventListener('resize', measure);
-    const id = setInterval(measure, 400);
-    return () => { window.removeEventListener('resize', measure); clearInterval(id); };
-  }, []);
-  return (
-    <div className="pointer-events-none fixed inset-0 z-50">
-      {gaps.map((g, i) => (
-        <div key={i} className="absolute left-1/2 -translate-x-1/2" style={{ top: g.y1, height: Math.max(0, g.y2 - g.y1) }}>
-          <div className="absolute left-1/2 top-0 h-full w-px -translate-x-1/2 bg-lime-400" />
-          <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 whitespace-nowrap bg-lime-400 px-1 text-[10px] font-bold text-black">
-            {g.px}px
-          </span>
-        </div>
-      ))}
-    </div>
-  );
-}
 
 export function HomeContent({ config }: { config: SiteConfig }) {
   const [enhanced, setEnhanced] = useState(false);
@@ -182,7 +145,6 @@ export function HomeContent({ config }: { config: SiteConfig }) {
   return (
     <div ref={rootRef} className="relative min-h-screen overflow-hidden bg-burgundy text-bone">
       <h1 className="sr-only">Marius — Développeur, Musicien, SysAdmin</h1>
-      {DEBUG_MEASURE && enhanced && <GapMeasure />}
 
       {/* DEBUG overlays */}
       {DEBUG && (
