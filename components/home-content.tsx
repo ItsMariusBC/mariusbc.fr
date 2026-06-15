@@ -257,10 +257,7 @@ export function HomeContent({ config }: { config: SiteConfig }) {
                   aria-hidden="true"
                   className="absolute inset-0 origin-left scale-x-0 bg-bone transition-transform duration-300 ease-out group-hover:scale-x-100 group-focus-visible:scale-x-100"
                 />
-                <span className="relative z-10 inline-flex items-center gap-2.5">
-                  Contact
-                  <span aria-hidden="true" className="transition-transform duration-300 group-hover:translate-x-1">→</span>
-                </span>
+                <span className="relative z-10">Me contacter</span>
               </button>
 
               {/* Social links — bold text-links row, bottom-center */}
