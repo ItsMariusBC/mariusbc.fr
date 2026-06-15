@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { checkPassword, signSession, SESSION_COOKIE } from '@/lib/session';
 import { rateLimit } from '@/lib/rate-limit';
+import { getPostHogClient } from '@/lib/posthog-server';
 
 export async function POST(req: NextRequest) {
   const ip =
@@ -23,5 +24,6 @@ export async function POST(req: NextRequest) {
     path: '/',
     maxAge: 7 * 24 * 60 * 60,
   });
+  getPostHogClient().capture({ distinctId: 'admin', event: 'admin_login_success' });
   return res;
 }

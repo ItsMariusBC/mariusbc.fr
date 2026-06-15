@@ -28,3 +28,8 @@ docs/
 
 # Local editable config (runtime)
 data/
+.env.local
+
+# Local agent config / wizard reports
+.claude/
+*-setup-report.md

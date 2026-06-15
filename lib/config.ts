@@ -4,10 +4,12 @@ import { ICON_MAP } from '@/lib/dock-icons';
 import defaultConfig from '@/config.default.json';
 
 export type LinkItem = { id: string; name: string; icon: string; url: string; tooltip: string };
-export type SiteConfig = { contactUrl: string; links: LinkItem[] };
+export type SiteConfig = { contactUrl: string; links: LinkItem[]; images: string[] };
 
 const SAFE_SCHEMES = ['https:', 'http:', 'mailto:', 'tel:'];
+const IMG_SCHEMES = ['https:', 'http:'];
 const MAX_LINKS = 30;
+const MAX_IMAGES = 12;
 const LIMITS = { name: 100, tooltip: 200, url: 2000, id: 64 };
 
 function isSafeUrl(value: string): boolean {
@@ -47,7 +49,20 @@ export function validateConfig(input: unknown): SiteConfig {
     };
   });
 
-  return { contactUrl, links };
+  const rawImages = obj.images ?? [];
+  if (!Array.isArray(rawImages)) throw new Error('images must be an array');
+  if (rawImages.length > MAX_IMAGES) throw new Error('too many images');
+  const images: string[] = rawImages.map((v) => {
+    const url = str(v, LIMITS.url);
+    try {
+      if (!IMG_SCHEMES.includes(new URL(url).protocol)) throw new Error('bad');
+    } catch {
+      throw new Error('invalid image url');
+    }
+    return url;
+  });
+
+  return { contactUrl, links, images };
 }
 
 function configPath(): string {
@@ -57,24 +72,22 @@ function configPath(): string {
     : path.join(process.cwd(), 'data', 'config.json');
 }
 
-// process-global config cache — single-writer/single-process use only
-let cache: SiteConfig | null = null;
-
+// Always read the file fresh — no in-memory cache. The data is tiny and reads
+// are rare, and caching made saved changes appear stale until a restart.
 export async function getConfig(): Promise<SiteConfig> {
-  if (cache) return cache;
   const file = configPath();
   try {
     const raw = await fs.readFile(file, 'utf8');
-    cache = validateConfig(JSON.parse(raw));
+    return validateConfig(JSON.parse(raw));
   } catch (err) {
     if ((err as NodeJS.ErrnoException).code !== 'ENOENT') {
       console.error('[config] unreadable/corrupt config, falling back to default:', err);
     }
-    cache = validateConfig(defaultConfig);
+    const fallback = validateConfig(defaultConfig);
     await fs.mkdir(path.dirname(file), { recursive: true }).catch(() => {});
-    await fs.writeFile(file, JSON.stringify(cache, null, 2), 'utf8').catch(() => {});
+    await fs.writeFile(file, JSON.stringify(fallback, null, 2), 'utf8').catch(() => {});
+    return fallback;
   }
-  return cache;
 }
 
 export async function saveConfig(input: unknown): Promise<SiteConfig> {
@@ -84,6 +97,5 @@ export async function saveConfig(input: unknown): Promise<SiteConfig> {
   await fs.mkdir(path.dirname(file), { recursive: true });
   await fs.writeFile(tmp, JSON.stringify(valid, null, 2), 'utf8');
   await fs.rename(tmp, file);
-  cache = valid;
   return valid;
 }

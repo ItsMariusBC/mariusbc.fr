@@ -1,5 +1,13 @@
 import type { Metadata } from 'next'
+import { Archivo } from 'next/font/google'
 import './globals.css'
+
+const archivo = Archivo({
+  subsets: ['latin'],
+  weight: ['400', '500', '700', '900'],
+  variable: '--font-archivo',
+  display: 'swap',
+})
 
 export const metadata: Metadata = {
   title: 'Marius - Portfolio',
@@ -30,7 +38,7 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="fr">
+    <html lang="fr" className={archivo.variable}>
       <body>
         {children}
       </body>

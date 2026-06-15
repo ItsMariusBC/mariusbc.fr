@@ -117,3 +117,8 @@ README.md
 
 # Vercel
 .vercel
+# Local-only / not needed in the image
+data
+docs
+.claude
+*-setup-report.md

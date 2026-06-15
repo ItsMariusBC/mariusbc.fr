@@ -8,7 +8,7 @@ const good = {
 
 describe('validateConfig', () => {
   it('accepts a valid config', () => {
-    expect(validateConfig(good)).toEqual(good);
+    expect(validateConfig(good)).toEqual({ ...good, images: [] });
   });
   it('rejects javascript: url', () => {
     expect(() => validateConfig({ ...good, links: [{ ...good.links[0], url: 'javascript:alert(1)' }] })).toThrow();
@@ -35,5 +35,22 @@ describe('validateConfig', () => {
   it('trims whitespace in fields', () => {
     const res = validateConfig({ ...good, links: [{ ...good.links[0], name: '  GitHub  ' }] });
     expect(res.links[0].name).toBe('GitHub');
+  });
+  it('defaults images to [] when omitted', () => {
+    expect(validateConfig(good).images).toEqual([]);
+  });
+  it('accepts up to 12 http(s) image urls', () => {
+    const imgs = Array.from({ length: 12 }, (_, i) => `https://x.com/${i}.jpg`);
+    expect(validateConfig({ ...good, images: imgs }).images).toHaveLength(12);
+  });
+  it('rejects a javascript: image url', () => {
+    expect(() => validateConfig({ ...good, images: ['javascript:1'] })).toThrow();
+  });
+  it('rejects more than 12 images', () => {
+    const imgs = Array.from({ length: 13 }, (_, i) => `https://x.com/${i}.jpg`);
+    expect(() => validateConfig({ ...good, images: imgs })).toThrow();
+  });
+  it('rejects non-array images', () => {
+    expect(() => validateConfig({ ...good, images: 'x' })).toThrow();
   });
 });

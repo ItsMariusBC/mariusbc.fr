@@ -2,6 +2,16 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { Button } from '@/components/ui/button';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 
 export default function AdminLogin() {
   const router = useRouter();
@@ -20,26 +30,43 @@ export default function AdminLogin() {
     });
     setLoading(false);
     if (res.ok) router.push('/admin/dashboard');
-    else setError(res.status === 429 ? 'Trop de tentatives, réessaie plus tard.' : 'Mot de passe incorrect.');
+    else
+      setError(
+        res.status === 429
+          ? 'Trop de tentatives, réessaie plus tard.'
+          : 'Mot de passe incorrect.'
+      );
   }
 
   return (
-    <div className="min-h-screen bg-[#0f1116] flex items-center justify-center p-4">
-      <form onSubmit={onSubmit} className="w-full max-w-sm flex flex-col gap-4 bg-white/5 border border-white/10 rounded-2xl p-8">
-        <h1 className="text-white text-xl font-semibold">Admin</h1>
-        <input
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          placeholder="Mot de passe"
-          autoFocus
-          className="bg-white/10 border border-white/20 rounded-lg px-4 py-2 text-white outline-none"
-        />
-        {error && <p className="text-red-400 text-sm">{error}</p>}
-        <button disabled={loading} className="bg-[rgb(157,122,255)] text-white rounded-lg px-4 py-2 font-medium disabled:opacity-50">
-          {loading ? '…' : 'Se connecter'}
-        </button>
-      </form>
+    <div className="flex min-h-screen items-center justify-center bg-background p-4 text-foreground">
+      <Card className="w-full max-w-sm border-border bg-card text-card-foreground">
+        <CardHeader>
+          <CardTitle className="text-xl uppercase tracking-[0.08em]">Admin</CardTitle>
+          <CardDescription className="text-muted-foreground">
+            Espace de gestion du site
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={onSubmit} className="flex flex-col gap-4">
+            <div className="flex flex-col gap-2">
+              <Label htmlFor="password">Mot de passe</Label>
+              <Input
+                id="password"
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="••••••••"
+                autoFocus
+              />
+            </div>
+            {error && <p className="text-sm text-destructive">{error}</p>}
+            <Button type="submit" disabled={loading} className="w-full">
+              {loading ? '…' : 'Se connecter'}
+            </Button>
+          </form>
+        </CardContent>
+      </Card>
     </div>
   );
 }

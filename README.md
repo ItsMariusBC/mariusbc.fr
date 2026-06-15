@@ -1,78 +1,63 @@
-# mariusbc.fr
+<div align="center">
 
-Site vitrine personnel (style Linktree) avec un petit panneau d'administration
-pour éditer le bouton de contact et les liens du dock.
+# 🍷 mariusbc.fr
 
-## Stack
+**A personal portfolio — one interactive type-poster in a Swiss art direction.**
 
-- Next.js 16 (App Router, sortie `standalone`)
-- React 19 + TypeScript
-- Tailwind CSS 4
-- Auth admin : `jose` (JWT) + `bcryptjs`, un seul admin
-- Stockage : fichier `config.json` (pas de base de données)
-- Tests : Vitest
+![Next.js](https://img.shields.io/badge/Next.js_16-000000?style=flat-square&logo=next.js)
+![React](https://img.shields.io/badge/React_19-20232a?style=flat-square&logo=react)
+![TypeScript](https://img.shields.io/badge/TypeScript-3178c6?style=flat-square&logo=typescript&logoColor=white)
+![Tailwind](https://img.shields.io/badge/Tailwind_4-0b1120?style=flat-square&logo=tailwindcss)
+![GSAP](https://img.shields.io/badge/GSAP-0ae448?style=flat-square&logo=greensock&logoColor=black)
+![PostHog](https://img.shields.io/badge/PostHog-1d4aff?style=flat-square&logo=posthog&logoColor=white)
 
-## Architecture
+</div>
 
-- Les données (URL de contact + liens) vivent dans un seul fichier JSON
-  (`config.json`) sur un volume. Pas de base de données.
-- `config.default.json` sert de configuration initiale : copiée vers le volume
-  au premier démarrage si le fichier est absent.
-- L'admin unique s'authentifie par mot de passe (haché en variable
-  d'environnement) ; la session est un cookie JWT signé, httpOnly.
+---
 
-```
-app/            Routes App Router (accueil, /admin, /api/*)
-components/     Composants UI (home-content, dashboard-editor, magicui/*)
-lib/            config.ts (stockage), session.ts (auth), dock-icons.ts, utils.ts
-tests/          Tests Vitest
-scripts/        hash-password.mjs
-public/         Assets statiques
-```
+## ✦ The project
 
-## Variables d'environnement
+A portfolio with a strong point of view: a **burgundy** `#8E0320` ground, **bone**
+`#E7E4D8` ink, a single grotesk (**Archivo**), generous negative space, and a living
+**MARIUS** wordmark. Everything visible — links, the contact button, project
+screenshots — is driven from a tiny admin panel. **No database.**
 
-Voir `.env.example`.
+## 🧱 Stack
 
-| Variable | Rôle |
+| Area | Choice |
 |---|---|
-| `AUTH_SECRET` | Secret de signature de session. `openssl rand -base64 32` |
-| `ADMIN_PASSWORD_HASH` | Hash bcrypt du mot de passe admin. `npm run gen:password "motdepasse"` |
-| `CONFIG_PATH` | Chemin du `config.json`. Défaut prod : `/app/data/config.json` |
+| 🧩 **Framework** | Next.js 16 (App Router, `standalone` output) · React 19 · TypeScript |
+| 🎨 **Styling** | Tailwind CSS 4 (CSS-first) · Archivo (`next/font`, self-hosted) |
+| 🎞️ **Motion** | GSAP (entry timeline) · matter-js (Falling Text) · hand-rolled canvas effects |
+| 🛠️ **Admin UI** | shadcn/ui (Card · Button · Input · Label), themed burgundy/bone |
+| 🔐 **Auth** | `jose` (httpOnly JWT) + `bcryptjs` — single password-based admin |
+| 🗂️ **Data** | a single `config.json` on a volume — no database |
+| 📈 **Analytics** | PostHog (reverse-proxy, production-only) |
+| ✅ **Tests** | Vitest |
 
-## Développement
+## ✨ Highlights
 
-```bash
-npm install
-cp .env.example .env.local        # puis renseigner AUTH_SECRET + ADMIN_PASSWORD_HASH
-npm run gen:password "motdepasse" # copier le hash dans .env.local
-npm run dev
+- 🖱️ **MARIUS** in *Text Pressure* — letter weight reacts to the cursor (variable font).
+- 🌀 Physics-based **Falling Text** tagline, **Click Spark** on click, **Noise** grain in the margins.
+- 🖼️ **Image Trail** — project screenshots streak across the edges as the cursor moves.
+- 🎬 Orchestrated **GSAP entry** (fade + rise + stagger), `prefers-reduced-motion`-safe.
+- 🧑‍💻 **Admin dashboard** — edit links, contact and images, with icon previews & thumbnails.
+- 🪶 **Zero database** — everything lives in a version-friendly `config.json`, read fresh on each request.
+
+## 🗺️ Structure
+
+```
+app/         App Router routes (home · /admin · /api/*)
+components/  UI (home-content, dashboard-editor, canvas/physics effects, ui/* shadcn)
+lib/         config (JSON store) · session (auth) · dock-icons · utils
+public/      Assets (Archivo variable font)
+tests/       Vitest
 ```
 
-- Accueil : http://localhost:3000
-- Admin : http://localhost:3000/admin
+## 🎨 Art direction
 
-## Scripts
+> Burgundy `#8E0320` · Bone `#E7E4D8` · Archivo · Swiss grid, generous negative space, flat.
 
-| Commande | Effet |
-|---|---|
-| `npm run dev` | Serveur de développement |
-| `npm run build` | Build de production |
-| `npm run start` | Sert le build |
-| `npm run lint` | ESLint |
-| `npm test` | Tests Vitest |
-| `npm run gen:password "..."` | Génère un hash bcrypt pour `ADMIN_PASSWORD_HASH` |
-
-## Déploiement (Docker)
-
-```bash
-docker build -t mariusbc .
-docker run -p 3000:3000 \
-  -e AUTH_SECRET=... \
-  -e ADMIN_PASSWORD_HASH=... \
-  -v mariusbc-data:/app/data \
-  mariusbc
-```
-
-Monter un volume sur `/app/data` pour persister `config.json` entre les
-redéploiements. Définir `AUTH_SECRET` et `ADMIN_PASSWORD_HASH`.
+<div align="center">
+<sub>© Marius BC — Dev · Music · SysAdmin · DevOps</sub>
+</div>
