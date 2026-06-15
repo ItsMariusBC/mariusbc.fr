@@ -42,32 +42,31 @@ function prefersReducedMotion() {
 // inviting the visitor to move the cursor there to reveal project screenshots.
 // Clean, geometric Swiss-style hint: uppercase label + a straight underline that
 // turns and points up-left toward the margin (the image-trail zone).
+// Clean geometric hint: a straight diagonal arrow pointing up-left toward the
+// margin, with the label underlined via border-b so the line matches the text
+// width exactly and stays aligned.
 function ProjectsHint() {
   return (
-    <div className="pointer-events-none absolute left-5 top-5 z-20 text-bone/80 md:left-9 md:top-9">
-      <div className="relative h-[64px] w-[200px]">
-        <span className="absolute left-[44px] top-[12px] text-xs uppercase tracking-[0.2em]">
-          Projets
-        </span>
-        <svg
-          width="200"
-          height="64"
-          viewBox="0 0 200 64"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="1.5"
-          strokeLinecap="square"
-          strokeLinejoin="miter"
-          aria-hidden="true"
-          className="absolute inset-0 overflow-visible"
-        >
-          {/* underline under the word → corner → straight diagonal up-left */}
-          <path d="M188 46 L44 46 L10 12" />
-          {/* sharp chevron arrowhead at the up-left tip */}
-          <path d="M10 12 L26 14" />
-          <path d="M10 12 L12 28" />
-        </svg>
-      </div>
+    <div className="pointer-events-none absolute left-6 top-6 z-20 flex items-end gap-2 text-bone/80 md:left-10 md:top-10">
+      <svg
+        width="36"
+        height="36"
+        viewBox="0 0 36 36"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="square"
+        strokeLinejoin="miter"
+        aria-hidden="true"
+        className="overflow-visible"
+      >
+        <path d="M36 36 L6 6" />
+        <path d="M6 6 L19 7" />
+        <path d="M6 6 L7 19" />
+      </svg>
+      <span className="border-b border-bone/50 pb-1.5 text-xs uppercase leading-none tracking-[0.2em]">
+        Projets
+      </span>
     </div>
   );
 }
