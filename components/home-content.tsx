@@ -37,6 +37,51 @@ function prefersReducedMotion() {
   );
 }
 
+// Top-left annotation inside the clear zone: "Projets" + a hand-drawn arrow that
+// sweeps underneath and points out toward the margins (the noise/trail zone),
+// inviting the visitor to move the cursor there to reveal project screenshots.
+function ProjectsHint() {
+  return (
+    <div className="pointer-events-none absolute left-3 top-3 z-20 text-bone/85 md:left-6 md:top-6">
+      <style>{`@keyframes proj-bob{0%,100%{transform:translate(0,0)}50%{transform:translate(-4px,-4px)}}`}</style>
+      <div className="flex items-center gap-2">
+        <svg
+          width="40"
+          height="40"
+          viewBox="0 0 40 40"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2.2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          aria-hidden="true"
+          className="motion-safe:[animation:proj-bob_1.8s_ease-in-out_infinite]"
+        >
+          {/* curve sweeping down-right, arrowhead pointing up-left toward the margin */}
+          <path d="M7 7 C 10 21, 19 31, 34 32" />
+          <path d="M7 7 L16 9.5" />
+          <path d="M7 7 L9.5 16" />
+        </svg>
+        <span className="text-base tracking-[0.05em] md:text-lg">Projets</span>
+      </div>
+      {/* underline swoosh under the word */}
+      <svg
+        width="130"
+        height="14"
+        viewBox="0 0 130 14"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        aria-hidden="true"
+        className="-mt-1 ml-10"
+      >
+        <path d="M2 5 C 38 13, 96 13, 128 4" />
+      </svg>
+    </div>
+  );
+}
+
 export function HomeContent({ config }: { config: SiteConfig }) {
   const [enhanced, setEnhanced] = useState(false);
 
@@ -160,6 +205,7 @@ export function HomeContent({ config }: { config: SiteConfig }) {
               <ClickSpark sparkColor="#E7E4D8" sparkCount={10} sparkRadius={24}>
                 {centerCluster}
               </ClickSpark>
+              <ProjectsHint />
             </div>
           ) : (
             centerCluster
