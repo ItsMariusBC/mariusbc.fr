@@ -211,7 +211,7 @@ export function HomeContent({ config }: { config: SiteConfig }) {
               <button
                 type="button"
                 onClick={(e) => { e.stopPropagation(); handleContactClick(); }}
-                className="absolute left-1/2 top-[72%] -translate-x-1/2 -translate-y-1/2 border border-bone bg-bone px-8 py-3 text-sm font-bold uppercase tracking-[0.12em] text-burgundy transition-colors hover:bg-burgundy hover:text-bone focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bone focus-visible:ring-offset-2 focus-visible:ring-offset-burgundy"
+                className="absolute left-1/2 top-[80%] -translate-x-1/2 -translate-y-1/2 border border-bone bg-bone px-8 py-3 text-sm font-bold uppercase tracking-[0.12em] text-burgundy transition-colors hover:bg-burgundy hover:text-bone focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bone focus-visible:ring-offset-2 focus-visible:ring-offset-burgundy"
               >
                 Contact
               </button>
