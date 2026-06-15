@@ -28,11 +28,25 @@ export async function verifySessionToken(token: string | undefined): Promise<boo
   }
 }
 
+// Admin bcrypt hash, provided base64-encoded (ADMIN_PASSWORD_HASH_B64). Base64
+// has no `$`, so it survives env/interpolation (Docker/Dokploy) that would
+// otherwise mangle a raw `$2b$12$...` hash. Generate with `npm run gen:password`.
+function adminHash(): string {
+  const b64 = process.env.ADMIN_PASSWORD_HASH_B64;
+  if (!b64) return '';
+  return Buffer.from(b64.trim(), 'base64').toString('utf8').trim();
+}
+
 export async function checkPassword(plain: string): Promise<boolean> {
   if (typeof plain !== 'string' || plain.length === 0 || plain.length > 1000) return false;
-  const hash = process.env.ADMIN_PASSWORD_HASH;
+  const hash = adminHash();
   if (!hash) return false;
-  return bcrypt.compare(plain, hash);
+  try {
+    return await bcrypt.compare(plain, hash);
+  } catch {
+    // malformed hash (e.g. `$` eaten by interpolation) → treat as no-match
+    return false;
+  }
 }
 
 // For API route handlers (read cookie off the request).
