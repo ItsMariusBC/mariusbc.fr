@@ -43,6 +43,7 @@ function prefersReducedMotion() {
 
 export function HomeContent({ config }: { config: SiteConfig }) {
   const [enhanced, setEnhanced] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
 
   // Enable the interactive layers only with motion + after mount
@@ -50,6 +51,17 @@ export function HomeContent({ config }: { config: SiteConfig }) {
   useEffect(() => {
     if (!prefersReducedMotion()) setEnhanced(true);
   }, []);
+
+  // Phone = plain burgundy ground: no grain, no image-trail (keeps it clean +
+  // light). Desktop is untouched. Matches Tailwind's md breakpoint (768px).
+  useEffect(() => {
+    const mq = window.matchMedia('(max-width: 767px)');
+    const update = () => setIsMobile(mq.matches);
+    update();
+    mq.addEventListener('change', update);
+    return () => mq.removeEventListener('change', update);
+  }, []);
+  const decorate = enhanced && !isMobile;
 
   // Harmonized GSAP entry — one timeline, single ease, fade + rise + stagger.
   // Runs once the enhanced subtree is mounted; skipped under reduced-motion.
@@ -171,8 +183,9 @@ export function HomeContent({ config }: { config: SiteConfig }) {
         </>
       )}
 
-      {/* NOISE — bone grain, full screen but masked to the OUTSIDE zone only */}
-      {enhanced && (
+      {/* NOISE — bone grain, full screen but masked to the OUTSIDE zone only.
+          Desktop only — phones get a clean burgundy ground. */}
+      {decorate && (
         <>
           <div aria-hidden="true" className="pointer-events-none absolute inset-0 z-0 opacity-[0.7]" style={dbg('#3b82f6')}>
             <Noise patternAlpha={50} />
@@ -188,8 +201,8 @@ export function HomeContent({ config }: { config: SiteConfig }) {
 
       {/* IMAGE TRAIL — admin image URLs trailing the cursor outside the clear zone.
           Listens on window; gated inside the component. Behind content (z-0) +
-          pointer-events-none so it never blocks anything. */}
-      {enhanced && config.images.length > 0 && (
+          pointer-events-none so it never blocks anything. Desktop only. */}
+      {decorate && config.images.length > 0 && (
         <div aria-hidden="true" className="pointer-events-none fixed inset-0 z-0" style={dbg('#f97316')}>
           <ImageTrail items={config.images} variant={1} />
         </div>
@@ -212,13 +225,13 @@ export function HomeContent({ config }: { config: SiteConfig }) {
                 data-reveal="cta"
                 type="button"
                 onClick={(e) => { e.stopPropagation(); handleContactClick(); }}
-                className="absolute left-1/2 top-[72%] -translate-x-1/2 -translate-y-1/2 whitespace-nowrap border border-bone bg-bone px-8 py-3.5 text-xs font-bold uppercase tracking-[0.18em] text-burgundy transition-colors duration-300 hover:bg-burgundy hover:text-bone focus-visible:bg-burgundy focus-visible:text-bone focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bone focus-visible:ring-offset-4 focus-visible:ring-offset-burgundy md:top-[74%] md:px-12 md:py-4 md:text-sm md:tracking-[0.25em]"
+                className="absolute left-1/2 top-[62%] -translate-x-1/2 -translate-y-1/2 whitespace-nowrap border border-bone bg-bone px-9 py-3.5 text-xs font-bold uppercase tracking-[0.2em] text-burgundy transition-colors duration-300 hover:bg-burgundy hover:text-bone focus-visible:bg-burgundy focus-visible:text-bone focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bone focus-visible:ring-offset-4 focus-visible:ring-offset-burgundy md:top-[74%] md:px-12 md:py-4 md:text-sm md:tracking-[0.25em]"
               >
                 Prendre RDV
               </button>
 
               {/* Social links — bold text-links row, bottom-center */}
-              <nav aria-label="Liens" className="absolute inset-x-0 bottom-5 flex flex-wrap items-center justify-center gap-x-5 gap-y-1.5 px-2 sm:gap-x-8 md:bottom-10">
+              <nav aria-label="Liens" className="absolute inset-x-0 bottom-8 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 px-3 sm:gap-x-8 md:bottom-10">
                 {config.links.map((l) => (
                   <button
                     key={l.id}
