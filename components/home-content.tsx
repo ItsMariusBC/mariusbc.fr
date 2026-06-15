@@ -220,7 +220,7 @@ export function HomeContent({ config }: { config: SiteConfig }) {
               {DEBUG_BUTTONS && (
                 <div
                   onClick={noSpark}
-                  className="absolute bottom-8 left-1/2 flex -translate-x-1/2 flex-wrap items-center justify-center gap-3 p-3 [outline:2px_dashed_#22d3ee]"
+                  className="absolute inset-x-0 bottom-8 flex flex-wrap items-center justify-between gap-3 px-4 py-3 [outline:2px_dashed_#22d3ee]"
                 >
                   {actions.map((a) => (
                     <InteractiveHoverButton key={a.label} onClick={a.onClick}>
