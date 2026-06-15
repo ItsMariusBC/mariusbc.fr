@@ -13,8 +13,9 @@ services:
     environment:
       # Required — generate with: openssl rand -base64 32
       AUTH_SECRET: ${AUTH_SECRET:?set AUTH_SECRET}
-      # Required — generate with: npm run gen:password "yourpassword"
-      ADMIN_PASSWORD_HASH: ${ADMIN_PASSWORD_HASH:?set ADMIN_PASSWORD_HASH}
+      # Admin password (REQUIRED) — base64 of the bcrypt hash.
+      # Generate with: npm run gen:password "yourpassword"
+      ADMIN_PASSWORD_HASH_B64: ${ADMIN_PASSWORD_HASH_B64:?set ADMIN_PASSWORD_HASH_B64}
       # Editable site config, persisted on the named volume below
       CONFIG_PATH: /app/data/config.json
       # Optional — PostHog analytics (production)
