@@ -14,11 +14,11 @@ export function JsonLd({ config }: { config: SiteConfig }) {
     {
       '@type': 'Person',
       '@id': `${SITE}/#marius`,
-      name: 'Marius Bizière Couzinet',
+      name: 'Marius Biziere Couzinet',
       alternateName: [
         'Marius', 'Marius BC', 'Marius.BC',
-        'Marius Bizière', 'Marius Biziere',
-        'Marius Couzinet', 'Bizière', 'Biziere', 'Couzinet',
+        'Marius Biziere', 'Marius Bizière',
+        'Marius Couzinet', 'Biziere', 'Bizière', 'Couzinet',
       ],
       url: SITE,
       jobTitle: 'Développeur Fullstack & DevOps · Ingénieur Web · UI/UX',
@@ -54,7 +54,7 @@ export function JsonLd({ config }: { config: SiteConfig }) {
       '@type': 'WebSite',
       '@id': `${SITE}/#website`,
       url: SITE,
-      name: 'Marius Bizière Couzinet — Portfolio',
+      name: 'Marius Biziere Couzinet — Portfolio',
       inLanguage: 'fr-FR',
       publisher: { '@id': `${SITE}/#marius` },
     },

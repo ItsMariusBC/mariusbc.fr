@@ -9,12 +9,14 @@ const archivo = Archivo({
   display: 'swap',
 })
 
-const TITLE = 'Marius Bizière Couzinet — Développeur Fullstack & DevOps · UI/UX';
+// Name spelled without accent — "Biziere" — everywhere it's displayed (brand form).
+// The accented "Bizière" is kept only as a search keyword / schema alias below.
+const NAME = 'Marius Biziere Couzinet';
+const TITLE = 'Marius Biziere Couzinet — Développeur Fullstack & DevOps · UI/UX';
 const DESCRIPTION =
-  'Marius Bizière Couzinet (Marius BC) — développeur fullstack & DevOps, ingénieur Web et UI/UX, freelance. Fondateur de Clyse.';
-// Embed (X / Discord / …): name spelled without accent — "Biziere" — to match the brand.
-const EMBED_TITLE = 'Marius Biziere Couzinet — Développeur Fullstack & DevOps · UI/UX';
-const EMBED_NAME = 'Marius Biziere Couzinet';
+  'Marius Biziere Couzinet (Marius BC) — développeur fullstack & DevOps, ingénieur Web et UI/UX, freelance. Fondateur de Clyse.';
+const EMBED_TITLE = TITLE;
+const EMBED_NAME = NAME;
 // Embed description = the site tagline
 const TAGLINE = 'Développeur fullstack & DevOps, ingénieur UI/UX — IT de bout en bout.';
 const COVER = { url: '/imgs/embed/cover.png', width: 814, height: 291, alt: EMBED_TITLE };
@@ -23,12 +25,12 @@ export const metadata: Metadata = {
   metadataBase: new URL('https://mariusbc.fr'),
   title: {
     default: TITLE,
-    template: '%s · Marius Bizière Couzinet',
+    template: `%s · ${NAME}`,
   },
   description: DESCRIPTION,
   applicationName: 'mariusbc.fr',
-  authors: [{ name: 'Marius Bizière Couzinet', url: 'https://mariusbc.fr' }],
-  creator: 'Marius Bizière Couzinet',
+  authors: [{ name: NAME, url: 'https://mariusbc.fr' }],
+  creator: NAME,
   publisher: 'Clyse',
   category: 'technology',
   keywords: [
