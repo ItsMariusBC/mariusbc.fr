@@ -6,8 +6,10 @@ services:
     image: mariusbc
     container_name: mariusbc
     restart: unless-stopped
-    ports:
-      - "3000:3000"
+    # No host port publishing — a reverse proxy (Traefik/Dokploy) routes to the
+    # container over the Docker network on port 3000.
+    expose:
+      - "3000"
     environment:
       # Required — generate with: openssl rand -base64 32
       AUTH_SECRET: ${AUTH_SECRET:?set AUTH_SECRET}
