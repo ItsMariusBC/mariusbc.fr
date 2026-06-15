@@ -124,7 +124,7 @@ export function HomeContent({ config }: { config: SiteConfig }) {
         {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions, jsx-a11y/click-events-have-key-events */}
         <div data-reveal="tagline" onClick={noSpark} className="w-full max-w-2xl px-4" style={dbg('#ef4444')}>
           {enhanced ? (
-            <div className="mx-auto -mt-8 h-28 w-full font-sans font-medium md:-mt-10 md:h-36">
+            <div className="mx-auto -mt-4 h-24 w-full font-sans font-medium md:-mt-10 md:h-36">
               <FallingText
                 text={TAGLINE}
                 highlightWords={HIGHLIGHTS}
@@ -143,7 +143,7 @@ export function HomeContent({ config }: { config: SiteConfig }) {
   );
 
   return (
-    <div ref={rootRef} className="relative min-h-screen overflow-hidden bg-burgundy text-bone">
+    <div ref={rootRef} className="relative min-h-[100svh] overflow-hidden bg-burgundy text-bone">
       <h1 className="sr-only">Marius — Développeur, Musicien, SysAdmin</h1>
 
       {/* DEBUG overlays */}
@@ -196,13 +196,13 @@ export function HomeContent({ config }: { config: SiteConfig }) {
       )}
 
       {/* CONTENT — MARIUS dead-center, nothing else */}
-      <div className="relative z-10 flex min-h-screen flex-col p-6 md:p-10" style={dbg('#ec4899')}>
+      <div className="relative z-10 flex min-h-[100svh] flex-col p-4 md:p-10" style={dbg('#ec4899')}>
         <main className="flex flex-1 items-center justify-center" style={dbg('#22d3ee')}>
           {enhanced ? (
-            // Spark area = the center clear zone (72vw x 80vh). Margins (noise/trail
-            // zone) sit outside it → no spark there. MARIUS + tagline stopPropagation
-            // → no spark on them either.
-            <div className="relative h-[80vh] w-[72vw]">
+            // Spark area = the center clear zone. Margins (noise/trail zone) sit
+            // outside it → no spark there. MARIUS + tagline stopPropagation → no
+            // spark on them either. Wider on phones so nothing feels cramped.
+            <div className="relative h-[82svh] w-[92vw] max-w-5xl md:h-[80vh] md:w-[72vw]">
               <ClickSpark sparkColor="#E7E4D8" sparkCount={10} sparkRadius={24}>
                 {centerCluster}
               </ClickSpark>
@@ -212,20 +212,20 @@ export function HomeContent({ config }: { config: SiteConfig }) {
                 data-reveal="cta"
                 type="button"
                 onClick={(e) => { e.stopPropagation(); handleContactClick(); }}
-                className="absolute left-1/2 top-[74%] -translate-x-1/2 -translate-y-1/2 border border-bone bg-bone px-12 py-4 text-sm font-bold uppercase tracking-[0.25em] text-burgundy transition-colors duration-300 hover:bg-burgundy hover:text-bone focus-visible:bg-burgundy focus-visible:text-bone focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bone focus-visible:ring-offset-4 focus-visible:ring-offset-burgundy"
+                className="absolute left-1/2 top-[72%] -translate-x-1/2 -translate-y-1/2 whitespace-nowrap border border-bone bg-bone px-8 py-3.5 text-xs font-bold uppercase tracking-[0.18em] text-burgundy transition-colors duration-300 hover:bg-burgundy hover:text-bone focus-visible:bg-burgundy focus-visible:text-bone focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bone focus-visible:ring-offset-4 focus-visible:ring-offset-burgundy md:top-[74%] md:px-12 md:py-4 md:text-sm md:tracking-[0.25em]"
               >
                 Prendre RDV
               </button>
 
               {/* Social links — bold text-links row, bottom-center */}
-              <nav aria-label="Liens" className="absolute inset-x-0 bottom-8 flex flex-wrap items-center justify-center gap-x-8 gap-y-2 px-4 md:bottom-10">
+              <nav aria-label="Liens" className="absolute inset-x-0 bottom-5 flex flex-wrap items-center justify-center gap-x-5 gap-y-1.5 px-2 sm:gap-x-8 md:bottom-10">
                 {config.links.map((l) => (
                   <button
                     key={l.id}
                     data-reveal="link"
                     type="button"
                     onClick={(e) => { e.stopPropagation(); handleLinkClick(l.url, l.name); }}
-                    className="text-2xl font-black uppercase leading-tight tracking-tight text-bone/45 transition-colors hover:text-bone focus-visible:text-bone focus-visible:outline-none md:text-3xl"
+                    className="text-lg font-black uppercase leading-tight tracking-tight text-bone/45 transition-colors hover:text-bone focus-visible:text-bone focus-visible:outline-none sm:text-2xl md:text-3xl"
                   >
                     {l.name}
                   </button>

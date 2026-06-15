@@ -12,9 +12,12 @@ const archivo = Archivo({
 const TITLE = 'Marius Bizière Couzinet — Développeur Fullstack & DevOps · UI/UX';
 const DESCRIPTION =
   'Marius Bizière Couzinet (Marius BC) — développeur fullstack & DevOps, ingénieur Web et UI/UX, freelance. Fondateur de Clyse.';
-// Embed (X / Discord / …) description = the site tagline
+// Embed (X / Discord / …): name spelled without accent — "Biziere" — to match the brand.
+const EMBED_TITLE = 'Marius Biziere Couzinet — Développeur Fullstack & DevOps · UI/UX';
+const EMBED_NAME = 'Marius Biziere Couzinet';
+// Embed description = the site tagline
 const TAGLINE = 'Développeur fullstack & DevOps, ingénieur UI/UX — IT de bout en bout.';
-const COVER = { url: '/imgs/embed/cover.png', width: 814, height: 291, alt: TITLE };
+const COVER = { url: '/imgs/embed/cover.png', width: 814, height: 291, alt: EMBED_TITLE };
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://mariusbc.fr'),
@@ -41,14 +44,14 @@ export const metadata: Metadata = {
     type: 'website',
     locale: 'fr_FR',
     url: 'https://mariusbc.fr',
-    siteName: 'Marius Bizière Couzinet',
-    title: TITLE,
+    siteName: EMBED_NAME,
+    title: EMBED_TITLE,
     description: TAGLINE,
     images: [COVER],
   },
   twitter: {
     card: 'summary_large_image',
-    title: TITLE,
+    title: EMBED_TITLE,
     description: TAGLINE,
     images: [COVER.url],
   },
