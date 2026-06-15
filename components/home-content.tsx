@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useEffect, type CSSProperties, type ReactNode } from 'react';
+import { useState, useEffect, useRef, type CSSProperties, type ReactNode } from 'react';
+import { gsap } from 'gsap';
 import TextPressure from '@/components/text-pressure';
 import FallingText from '@/components/falling-text';
 import Noise from '@/components/noise';
@@ -48,7 +49,7 @@ function prefersReducedMotion() {
 // width exactly and stays aligned.
 function ProjectsHint() {
   return (
-    <div className="pointer-events-none absolute left-6 top-6 z-20 flex items-end gap-2 text-bone/80 md:left-10 md:top-10">
+    <div data-reveal="hint" className="pointer-events-none absolute left-6 top-6 z-20 flex items-end gap-2 text-bone/80 md:left-10 md:top-10">
       <svg
         width="36"
         height="36"
@@ -74,12 +75,44 @@ function ProjectsHint() {
 
 export function HomeContent({ config }: { config: SiteConfig }) {
   const [enhanced, setEnhanced] = useState(false);
+  const rootRef = useRef<HTMLDivElement>(null);
 
   // Enable the interactive layers only with motion + after mount
   // (server + first paint render the static fallback → no hydration mismatch).
   useEffect(() => {
     if (!prefersReducedMotion()) setEnhanced(true);
   }, []);
+
+  // Harmonized GSAP entry — one timeline, single ease, fade + rise + stagger.
+  // Runs once the enhanced subtree is mounted; skipped under reduced-motion.
+  useEffect(() => {
+    if (!enhanced) return;
+    const ctx = gsap.context(() => {
+      // clearProps removes gsap's inline styles when each tween finishes, so the
+      // end state is the natural (visible) layout — never stuck hidden.
+      const tl = gsap.timeline({ defaults: { ease: 'power3.out', duration: 0.8, clearProps: 'opacity,transform' } });
+      tl.from('[data-reveal="hint"]', { opacity: 0, y: -10 })
+        .from('[data-reveal="marius"]', { opacity: 0, y: 28 }, '-=0.55')
+        .from('[data-reveal="tagline"]', { opacity: 0, y: 18 }, '-=0.5')
+        .from('[data-reveal="cta"]', { opacity: 0 }, '-=0.45')
+        .from('[data-reveal="link"]', { opacity: 0, y: 14, stagger: 0.08 }, '-=0.45');
+    }, rootRef);
+
+    // Failsafe (real timer, independent of gsap's ticker): if the timeline ever
+    // stalls, force every revealed element back to its natural visible state.
+    const safety = setTimeout(() => {
+      rootRef.current?.querySelectorAll<HTMLElement>('[data-reveal]').forEach((el) => {
+        el.style.opacity = '';
+        el.style.transform = '';
+        el.style.visibility = '';
+      });
+    }, 2500);
+
+    return () => {
+      clearTimeout(safety);
+      ctx.revert();
+    };
+  }, [enhanced]);
 
   // Stop a click from reaching the ClickSpark wrapper → no spark on these.
   const noSpark = (e: React.MouseEvent) => e.stopPropagation();
@@ -100,7 +133,7 @@ export function HomeContent({ config }: { config: SiteConfig }) {
       {/* MARIUS + tagline as ONE in-flow block, centered together */}
       <div className="flex flex-col items-center" style={dbg('#a855f7')}>
         {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions, jsx-a11y/click-events-have-key-events */}
-        <div aria-hidden="true" onClick={noSpark} className="aspect-[4/1] w-[min(88vw,46rem)]" style={dbg('#facc15')}>
+        <div data-reveal="marius" aria-hidden="true" onClick={noSpark} className="aspect-[4/1] w-[min(88vw,46rem)]" style={dbg('#facc15')}>
           {enhanced ? (
             <TextPressure
               text="Marius"
@@ -120,7 +153,7 @@ export function HomeContent({ config }: { config: SiteConfig }) {
         </div>
 
         {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions, jsx-a11y/click-events-have-key-events */}
-        <div onClick={noSpark} className="w-full max-w-2xl px-4" style={dbg('#ef4444')}>
+        <div data-reveal="tagline" onClick={noSpark} className="w-full max-w-2xl px-4" style={dbg('#ef4444')}>
           {enhanced ? (
             <div className="mx-auto -mt-8 h-28 w-full font-sans font-medium md:-mt-10 md:h-36">
               <FallingText
@@ -141,7 +174,7 @@ export function HomeContent({ config }: { config: SiteConfig }) {
   );
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-burgundy text-bone">
+    <div ref={rootRef} className="relative min-h-screen overflow-hidden bg-burgundy text-bone">
       <h1 className="sr-only">Marius — Développeur, Musicien, SysAdmin</h1>
 
       {/* DEBUG overlays */}
@@ -209,6 +242,7 @@ export function HomeContent({ config }: { config: SiteConfig }) {
               {/* Link buttons — big bold text-links, bottom-left */}
               {/* Contact — CTA: outline that fills bone left→right on hover */}
               <button
+                data-reveal="cta"
                 type="button"
                 onClick={(e) => { e.stopPropagation(); handleContactClick(); }}
                 className="group absolute left-1/2 top-[74%] -translate-x-1/2 -translate-y-1/2 overflow-hidden border border-bone px-10 py-4 text-sm font-bold uppercase tracking-[0.2em] text-bone transition-colors duration-300 hover:text-burgundy focus-visible:text-burgundy focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bone focus-visible:ring-offset-4 focus-visible:ring-offset-burgundy"
@@ -228,6 +262,7 @@ export function HomeContent({ config }: { config: SiteConfig }) {
                 {config.links.map((l) => (
                   <button
                     key={l.id}
+                    data-reveal="link"
                     type="button"
                     onClick={(e) => { e.stopPropagation(); handleLinkClick(l.url); }}
                     className="text-2xl font-black uppercase leading-tight tracking-tight text-bone/45 transition-colors hover:text-bone focus-visible:text-bone focus-visible:outline-none md:text-3xl"
