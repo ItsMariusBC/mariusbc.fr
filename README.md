@@ -1,9 +1,8 @@
 <div align="center">
 
-# mariusbc.fr
+# 🍷 mariusbc.fr
 
-**Site vitrine personnel** — une page-affiche interactive dans une direction
-artistique Swiss / typographique.
+**A personal portfolio — one interactive type-poster in a Swiss art direction.**
 
 ![Next.js](https://img.shields.io/badge/Next.js_16-000000?style=flat-square&logo=next.js)
 ![React](https://img.shields.io/badge/React_19-20232a?style=flat-square&logo=react)
@@ -16,48 +15,48 @@ artistique Swiss / typographique.
 
 ---
 
-## Le projet
+## ✦ The project
 
-Une vitrine au parti pris fort : fond **burgundy** `#8E0320`, encre **bone**
-`#E7E4D8`, une seule grotesque (**Archivo**), beaucoup de vide, et un wordmark
-**MARIUS** vivant. Le contenu (liens, bouton de contact, screenshots) est piloté
-depuis un petit panneau d'administration — sans base de données.
+A portfolio with a strong point of view: a **burgundy** `#8E0320` ground, **bone**
+`#E7E4D8` ink, a single grotesk (**Archivo**), generous negative space, and a living
+**MARIUS** wordmark. Everything visible — links, the contact button, project
+screenshots — is driven from a tiny admin panel. **No database.**
 
-## Stack
+## 🧱 Stack
 
-| Domaine | Choix |
+| Area | Choice |
 |---|---|
-| **Framework** | Next.js 16 (App Router, sortie `standalone`) · React 19 · TypeScript |
-| **Style** | Tailwind CSS 4 (CSS-first) · Archivo (`next/font`, self-hosted) |
-| **Animation** | GSAP (timeline d'entrée) · matter-js (Falling Text) · effets canvas maison |
-| **UI admin** | shadcn/ui (Card, Button, Input, Label) thémé burgundy/bone |
-| **Auth** | `jose` (JWT httpOnly) + `bcryptjs` — admin unique, par mot de passe |
-| **Données** | un fichier `config.json` sur volume — pas de base de données |
-| **Analytics** | PostHog (reverse-proxy, activé en production) |
-| **Tests** | Vitest |
+| 🧩 **Framework** | Next.js 16 (App Router, `standalone` output) · React 19 · TypeScript |
+| 🎨 **Styling** | Tailwind CSS 4 (CSS-first) · Archivo (`next/font`, self-hosted) |
+| 🎞️ **Motion** | GSAP (entry timeline) · matter-js (Falling Text) · hand-rolled canvas effects |
+| 🛠️ **Admin UI** | shadcn/ui (Card · Button · Input · Label), themed burgundy/bone |
+| 🔐 **Auth** | `jose` (httpOnly JWT) + `bcryptjs` — single password-based admin |
+| 🗂️ **Data** | a single `config.json` on a volume — no database |
+| 📈 **Analytics** | PostHog (reverse-proxy, production-only) |
+| ✅ **Tests** | Vitest |
 
-## Highlights
+## ✨ Highlights
 
-- **MARIUS** en *Text Pressure* — le poids des lettres réagit au curseur (police variable).
-- **Falling Text** physique pour la tagline, **Click Spark** au clic, **Noise** grain dans les marges.
-- **Image Trail** : les screenshots des réalisations défilent en traînée sur les bords.
-- **Entrée orchestrée** en GSAP, harmonisée (fade + montée + stagger), `prefers-reduced-motion`-safe.
-- **Dashboard admin** : édition des liens, du contact et des images — aperçus d'icônes & miniatures.
-- **Zéro base de données** : tout vit dans un `config.json` versionnable, relu à chaud.
+- 🖱️ **MARIUS** in *Text Pressure* — letter weight reacts to the cursor (variable font).
+- 🌀 Physics-based **Falling Text** tagline, **Click Spark** on click, **Noise** grain in the margins.
+- 🖼️ **Image Trail** — project screenshots streak across the edges as the cursor moves.
+- 🎬 Orchestrated **GSAP entry** (fade + rise + stagger), `prefers-reduced-motion`-safe.
+- 🧑‍💻 **Admin dashboard** — edit links, contact and images, with icon previews & thumbnails.
+- 🪶 **Zero database** — everything lives in a version-friendly `config.json`, read fresh on each request.
 
-## Structure
+## 🗺️ Structure
 
 ```
-app/         Routes App Router (accueil · /admin · /api/*)
-components/  UI (home-content, dashboard-editor, magicui-like effects, ui/* shadcn)
-lib/         config (stockage JSON) · session (auth) · dock-icons · utils
-public/      Assets (police variable Archivo)
+app/         App Router routes (home · /admin · /api/*)
+components/  UI (home-content, dashboard-editor, canvas/physics effects, ui/* shadcn)
+lib/         config (JSON store) · session (auth) · dock-icons · utils
+public/      Assets (Archivo variable font)
 tests/       Vitest
 ```
 
-## Direction artistique
+## 🎨 Art direction
 
-> Burgundy `#8E0320` · Bone `#E7E4D8` · Archivo · grille Swiss, négatif généreux, à plat.
+> Burgundy `#8E0320` · Bone `#E7E4D8` · Archivo · Swiss grid, generous negative space, flat.
 
 <div align="center">
 <sub>© Marius BC — Dev · Music · SysAdmin · DevOps</sub>
