@@ -207,13 +207,20 @@ export function HomeContent({ config }: { config: SiteConfig }) {
               <ProjectsHint />
 
               {/* Link buttons — big bold text-links, bottom-left */}
-              {/* Contact — prominent filled button, midway between tagline & links */}
+              {/* Contact — CTA: outline that fills bone left→right on hover */}
               <button
                 type="button"
                 onClick={(e) => { e.stopPropagation(); handleContactClick(); }}
-                className="absolute left-1/2 top-[80%] -translate-x-1/2 -translate-y-1/2 border border-bone bg-bone px-8 py-3 text-sm font-bold uppercase tracking-[0.12em] text-burgundy transition-colors hover:bg-burgundy hover:text-bone focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bone focus-visible:ring-offset-2 focus-visible:ring-offset-burgundy"
+                className="group absolute left-1/2 top-[77%] -translate-x-1/2 -translate-y-1/2 overflow-hidden border border-bone px-10 py-4 text-sm font-bold uppercase tracking-[0.2em] text-bone transition-colors duration-300 hover:text-burgundy focus-visible:text-burgundy focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bone focus-visible:ring-offset-4 focus-visible:ring-offset-burgundy"
               >
-                Contact
+                <span
+                  aria-hidden="true"
+                  className="absolute inset-0 origin-left scale-x-0 bg-bone transition-transform duration-300 ease-out group-hover:scale-x-100 group-focus-visible:scale-x-100"
+                />
+                <span className="relative z-10 inline-flex items-center gap-2.5">
+                  Contact
+                  <span aria-hidden="true" className="transition-transform duration-300 group-hover:translate-x-1">→</span>
+                </span>
               </button>
 
               {/* Social links — bold text-links row, bottom-center */}
