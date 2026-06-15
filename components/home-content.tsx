@@ -225,7 +225,7 @@ export function HomeContent({ config }: { config: SiteConfig }) {
                 data-reveal="cta"
                 type="button"
                 onClick={(e) => { e.stopPropagation(); handleContactClick(); }}
-                className="absolute left-1/2 top-[62%] -translate-x-1/2 -translate-y-1/2 whitespace-nowrap border border-bone bg-bone px-9 py-3.5 text-xs font-bold uppercase tracking-[0.2em] text-burgundy transition-colors duration-300 hover:bg-burgundy hover:text-bone focus-visible:bg-burgundy focus-visible:text-bone focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bone focus-visible:ring-offset-4 focus-visible:ring-offset-burgundy md:top-[74%] md:px-12 md:py-4 md:text-sm md:tracking-[0.25em]"
+                className="absolute left-1/2 top-[77%] -translate-x-1/2 -translate-y-1/2 whitespace-nowrap border border-bone bg-bone px-9 py-3.5 text-xs font-bold uppercase tracking-[0.2em] text-burgundy transition-colors duration-300 hover:bg-burgundy hover:text-bone focus-visible:bg-burgundy focus-visible:text-bone focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bone focus-visible:ring-offset-4 focus-visible:ring-offset-burgundy md:top-[74%] md:px-12 md:py-4 md:text-sm md:tracking-[0.25em]"
               >
                 Prendre RDV
               </button>
