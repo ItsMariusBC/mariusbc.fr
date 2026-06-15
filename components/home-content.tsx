@@ -52,10 +52,11 @@ export function HomeContent({ config }: { config: SiteConfig }) {
   const noSpark = (e: React.MouseEvent) => e.stopPropagation();
 
   const centerCluster: ReactNode = (
-    <div className="relative flex h-full w-full items-center justify-center text-center">
-      <div className="relative" style={dbg('#a855f7')}>
+    <div className="flex h-full w-full items-center justify-center text-center">
+      {/* MARIUS + tagline as ONE in-flow block, centered together */}
+      <div className="flex flex-col items-center" style={dbg('#a855f7')}>
         {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions, jsx-a11y/click-events-have-key-events */}
-        <div aria-hidden="true" onClick={noSpark} className="mx-auto aspect-[4/1] w-[min(88vw,46rem)]" style={dbg('#facc15')}>
+        <div aria-hidden="true" onClick={noSpark} className="aspect-[4/1] w-[min(88vw,46rem)]" style={dbg('#facc15')}>
           {enhanced ? (
             <TextPressure
               text="Marius"
@@ -75,9 +76,9 @@ export function HomeContent({ config }: { config: SiteConfig }) {
         </div>
 
         {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions, jsx-a11y/click-events-have-key-events */}
-        <div onClick={noSpark} className="absolute left-1/2 top-full w-full max-w-2xl -translate-x-1/2 px-4" style={dbg('#ef4444')}>
+        <div onClick={noSpark} className="w-full max-w-2xl px-4" style={dbg('#ef4444')}>
           {enhanced ? (
-            <div className="mx-auto -mt-6 h-44 w-full font-sans font-medium md:-mt-8 md:h-60">
+            <div className="mx-auto -mt-8 h-28 w-full font-sans font-medium md:-mt-10 md:h-36">
               <FallingText
                 text={TAGLINE}
                 highlightWords={HIGHLIGHTS}
@@ -88,7 +89,7 @@ export function HomeContent({ config }: { config: SiteConfig }) {
               />
             </div>
           ) : (
-            <p className="mx-auto -mt-4 max-w-2xl text-center text-lg font-medium md:text-2xl text-bone/80">{TAGLINE}</p>
+            <p className="mx-auto -mt-6 max-w-2xl text-center text-lg font-medium md:text-2xl text-bone/80">{TAGLINE}</p>
           )}
         </div>
       </div>
