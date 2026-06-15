@@ -40,31 +40,32 @@ function prefersReducedMotion() {
 // Top-left annotation inside the clear zone: "Projets" + a hand-drawn arrow that
 // sweeps underneath and points out toward the margins (the noise/trail zone),
 // inviting the visitor to move the cursor there to reveal project screenshots.
+// Clean, geometric Swiss-style hint: uppercase label + a straight underline that
+// turns and points up-left toward the margin (the image-trail zone).
 function ProjectsHint() {
   return (
-    <div className="pointer-events-none absolute left-4 top-4 z-20 text-bone/85 md:left-8 md:top-8">
-      <style>{`@keyframes proj-bob{0%,100%{transform:translate(0,0)}50%{transform:translate(-5px,-5px)}}`}</style>
-      <div className="relative h-[90px] w-[210px]">
-        {/* word sits above the swoosh */}
-        <span className="absolute left-[58px] top-[6px] text-lg tracking-[0.04em] md:text-xl">
+    <div className="pointer-events-none absolute left-5 top-5 z-20 text-bone/80 md:left-9 md:top-9">
+      <div className="relative h-[64px] w-[200px]">
+        <span className="absolute left-[44px] top-[12px] text-xs uppercase tracking-[0.2em]">
           Projets
         </span>
-        {/* ONE continuous hand-drawn stroke: underline → sweep left → arrow up-left */}
         <svg
-          width="210"
-          height="90"
-          viewBox="0 0 210 90"
+          width="200"
+          height="64"
+          viewBox="0 0 200 64"
           fill="none"
           stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
+          strokeWidth="1.5"
+          strokeLinecap="square"
+          strokeLinejoin="miter"
           aria-hidden="true"
-          className="absolute inset-0 overflow-visible motion-safe:[animation:proj-bob_2s_ease-in-out_infinite]"
+          className="absolute inset-0 overflow-visible"
         >
-          <path d="M196 52 C 150 66, 92 66, 60 50 C 40 40, 28 28, 20 12" />
-          <path d="M20 12 L34 15" />
-          <path d="M20 12 L23 26" />
+          {/* underline under the word → corner → straight diagonal up-left */}
+          <path d="M188 46 L44 46 L10 12" />
+          {/* sharp chevron arrowhead at the up-left tip */}
+          <path d="M10 12 L26 14" />
+          <path d="M10 12 L12 28" />
         </svg>
       </div>
     </div>
