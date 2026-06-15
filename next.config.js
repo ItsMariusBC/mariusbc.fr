@@ -1,5 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // Allow the proxied dev host (e.g. accessing the dev server via a domain).
+  allowedDevOrigins: ['dev.mariusbc.fr'],
   serverExternalPackages: ['bcryptjs'],
   turbopack: {},
   output: 'standalone',
