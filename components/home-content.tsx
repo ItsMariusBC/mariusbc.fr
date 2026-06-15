@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef, type CSSProperties, type ReactNode } from 'react';
 import { gsap } from 'gsap';
+import posthog from 'posthog-js';
 import TextPressure from '@/components/text-pressure';
 import FallingText from '@/components/falling-text';
 import Noise from '@/components/noise';
@@ -39,40 +40,6 @@ function prefersReducedMotion() {
   );
 }
 
-// Top-left annotation inside the clear zone: "Projets" + a hand-drawn arrow that
-// sweeps underneath and points out toward the margins (the noise/trail zone),
-// inviting the visitor to move the cursor there to reveal project screenshots.
-// Clean, geometric Swiss-style hint: uppercase label + a straight underline that
-// turns and points up-left toward the margin (the image-trail zone).
-// Clean geometric hint: a straight diagonal arrow pointing up-left toward the
-// margin, with the label underlined via border-b so the line matches the text
-// width exactly and stays aligned.
-function ProjectsHint() {
-  return (
-    <div data-reveal="hint" className="pointer-events-none absolute left-6 top-6 z-20 flex items-end gap-2 text-bone/80 md:left-10 md:top-10">
-      <svg
-        width="36"
-        height="36"
-        viewBox="0 0 36 36"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.5"
-        strokeLinecap="square"
-        strokeLinejoin="miter"
-        aria-hidden="true"
-        className="overflow-visible"
-      >
-        <path d="M36 36 L6 6" />
-        <path d="M6 6 L19 7" />
-        <path d="M6 6 L7 19" />
-      </svg>
-      <span className="border-b border-bone/50 pb-1.5 text-xs uppercase leading-none tracking-[0.2em]">
-        Projets
-      </span>
-    </div>
-  );
-}
-
 export function HomeContent({ config }: { config: SiteConfig }) {
   const [enhanced, setEnhanced] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
@@ -91,8 +58,7 @@ export function HomeContent({ config }: { config: SiteConfig }) {
       // clearProps removes gsap's inline styles when each tween finishes, so the
       // end state is the natural (visible) layout — never stuck hidden.
       const tl = gsap.timeline({ defaults: { ease: 'power3.out', duration: 0.8, clearProps: 'opacity,transform' } });
-      tl.from('[data-reveal="hint"]', { opacity: 0, y: -10 })
-        .from('[data-reveal="marius"]', { opacity: 0, y: 28 }, '-=0.55')
+      tl.from('[data-reveal="marius"]', { opacity: 0, y: 28 })
         .from('[data-reveal="tagline"]', { opacity: 0, y: 18 }, '-=0.5')
         .from('[data-reveal="cta"]', { opacity: 0 }, '-=0.45')
         .from('[data-reveal="link"]', { opacity: 0, y: 14, stagger: 0.08 }, '-=0.45');
@@ -119,10 +85,12 @@ export function HomeContent({ config }: { config: SiteConfig }) {
 
   const handleContactClick = () => {
     const url = config.contactUrl;
+    posthog.capture('contact_clicked', { contact_url: url });
     if (url.startsWith('mailto:') || url.startsWith('tel:')) window.location.href = url;
     else window.open(url, '_blank', 'noopener,noreferrer');
   };
-  const handleLinkClick = (url: string) => {
+  const handleLinkClick = (url: string, name: string) => {
+    posthog.capture('link_clicked', { link_name: name, link_url: url });
     if (url.startsWith('http')) window.open(url, '_blank', 'noopener,noreferrer');
     else window.location.href = url;
   };
@@ -237,7 +205,6 @@ export function HomeContent({ config }: { config: SiteConfig }) {
               <ClickSpark sparkColor="#E7E4D8" sparkCount={10} sparkRadius={24}>
                 {centerCluster}
               </ClickSpark>
-              <ProjectsHint />
 
               {/* Link buttons — big bold text-links, bottom-left */}
               {/* Contact — CTA: outline that fills bone left→right on hover */}
@@ -245,7 +212,7 @@ export function HomeContent({ config }: { config: SiteConfig }) {
                 data-reveal="cta"
                 type="button"
                 onClick={(e) => { e.stopPropagation(); handleContactClick(); }}
-                className="group absolute left-1/2 top-[74%] -translate-x-1/2 -translate-y-1/2 overflow-hidden border border-bone px-10 py-4 text-sm font-bold uppercase tracking-[0.2em] text-bone transition-colors duration-300 hover:text-burgundy focus-visible:text-burgundy focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bone focus-visible:ring-offset-4 focus-visible:ring-offset-burgundy"
+                className="group absolute left-1/2 top-[78%] -translate-x-1/2 -translate-y-1/2 overflow-hidden border border-bone px-10 py-4 text-sm font-bold uppercase tracking-[0.2em] text-bone transition-colors duration-300 hover:text-burgundy focus-visible:text-burgundy focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bone focus-visible:ring-offset-4 focus-visible:ring-offset-burgundy"
               >
                 <span
                   aria-hidden="true"
@@ -264,7 +231,7 @@ export function HomeContent({ config }: { config: SiteConfig }) {
                     key={l.id}
                     data-reveal="link"
                     type="button"
-                    onClick={(e) => { e.stopPropagation(); handleLinkClick(l.url); }}
+                    onClick={(e) => { e.stopPropagation(); handleLinkClick(l.url, l.name); }}
                     className="text-2xl font-black uppercase leading-tight tracking-tight text-bone/45 transition-colors hover:text-bone focus-visible:text-bone focus-visible:outline-none md:text-3xl"
                   >
                     {l.name}
