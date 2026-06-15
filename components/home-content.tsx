@@ -42,42 +42,31 @@ function prefersReducedMotion() {
 // inviting the visitor to move the cursor there to reveal project screenshots.
 function ProjectsHint() {
   return (
-    <div className="pointer-events-none absolute left-3 top-3 z-20 text-bone/85 md:left-6 md:top-6">
-      <style>{`@keyframes proj-bob{0%,100%{transform:translate(0,0)}50%{transform:translate(-4px,-4px)}}`}</style>
-      <div className="flex items-center gap-2">
+    <div className="pointer-events-none absolute left-4 top-4 z-20 text-bone/85 md:left-8 md:top-8">
+      <style>{`@keyframes proj-bob{0%,100%{transform:translate(0,0)}50%{transform:translate(-5px,-5px)}}`}</style>
+      <div className="relative h-[90px] w-[210px]">
+        {/* word sits above the swoosh */}
+        <span className="absolute left-[58px] top-[6px] text-lg tracking-[0.04em] md:text-xl">
+          Projets
+        </span>
+        {/* ONE continuous hand-drawn stroke: underline → sweep left → arrow up-left */}
         <svg
-          width="40"
-          height="40"
-          viewBox="0 0 40 40"
+          width="210"
+          height="90"
+          viewBox="0 0 210 90"
           fill="none"
           stroke="currentColor"
-          strokeWidth="2.2"
+          strokeWidth="2"
           strokeLinecap="round"
           strokeLinejoin="round"
           aria-hidden="true"
-          className="motion-safe:[animation:proj-bob_1.8s_ease-in-out_infinite]"
+          className="absolute inset-0 overflow-visible motion-safe:[animation:proj-bob_2s_ease-in-out_infinite]"
         >
-          {/* curve sweeping down-right, arrowhead pointing up-left toward the margin */}
-          <path d="M7 7 C 10 21, 19 31, 34 32" />
-          <path d="M7 7 L16 9.5" />
-          <path d="M7 7 L9.5 16" />
+          <path d="M196 52 C 150 66, 92 66, 60 50 C 40 40, 28 28, 20 12" />
+          <path d="M20 12 L34 15" />
+          <path d="M20 12 L23 26" />
         </svg>
-        <span className="text-base tracking-[0.05em] md:text-lg">Projets</span>
       </div>
-      {/* underline swoosh under the word */}
-      <svg
-        width="130"
-        height="14"
-        viewBox="0 0 130 14"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        aria-hidden="true"
-        className="-mt-1 ml-10"
-      >
-        <path d="M2 5 C 38 13, 96 13, 128 4" />
-      </svg>
     </div>
   );
 }
