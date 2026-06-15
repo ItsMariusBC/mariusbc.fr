@@ -6,7 +6,12 @@ import FallingText from '@/components/falling-text';
 import Noise from '@/components/noise';
 import ClickSpark from '@/components/click-spark';
 import ImageTrail from '@/components/image-trail';
+import { InteractiveHoverButton } from '@/components/interactive-hover-button';
 import type { SiteConfig } from '@/lib/config';
+
+// DEBUG: show placeholder link buttons + an outline of their zone, to decide
+// placement. Set to false to hide.
+const DEBUG_BUTTONS = true;
 
 const TAGLINE =
   'Développeur fullstack & DevOps, ingénieur UI/UX — IT de bout en bout.';
@@ -80,10 +85,24 @@ export function HomeContent({ config }: { config: SiteConfig }) {
     if (!prefersReducedMotion()) setEnhanced(true);
   }, []);
 
-  // MARIUS wordmark, centered. The tagline hangs absolutely below it so it never
-  // pushes the wordmark off the vertical center of the screen.
-  // Stop a click from reaching the ClickSpark wrapper → no spark on MARIUS / tagline.
+  // Stop a click from reaching the ClickSpark wrapper → no spark on these.
   const noSpark = (e: React.MouseEvent) => e.stopPropagation();
+
+  const handleContactClick = () => {
+    const url = config.contactUrl;
+    if (url.startsWith('mailto:') || url.startsWith('tel:')) window.location.href = url;
+    else window.open(url, '_blank', 'noopener,noreferrer');
+  };
+  const handleLinkClick = (url: string) => {
+    if (url.startsWith('http')) window.open(url, '_blank', 'noopener,noreferrer');
+    else window.location.href = url;
+  };
+  const actions = [
+    ...config.links.map((l) => ({ label: l.name, onClick: () => handleLinkClick(l.url) })),
+    { label: 'Contact', onClick: handleContactClick },
+  ];
+
+  // MARIUS wordmark, centered.
 
   const centerCluster: ReactNode = (
     <div className="flex h-full w-full items-center justify-center text-center">
@@ -195,6 +214,21 @@ export function HomeContent({ config }: { config: SiteConfig }) {
                 {centerCluster}
               </ClickSpark>
               <ProjectsHint />
+
+              {/* DEBUG — proposed button placement: centered row at the bottom of
+                  the clear zone (balances the "Projets" hint top-left) */}
+              {DEBUG_BUTTONS && (
+                <div
+                  onClick={noSpark}
+                  className="absolute bottom-8 left-1/2 flex -translate-x-1/2 flex-wrap items-center justify-center gap-3 p-3 [outline:2px_dashed_#22d3ee]"
+                >
+                  {actions.map((a) => (
+                    <InteractiveHoverButton key={a.label} onClick={a.onClick}>
+                      {a.label}
+                    </InteractiveHoverButton>
+                  ))}
+                </div>
+              )}
             </div>
           ) : (
             centerCluster
