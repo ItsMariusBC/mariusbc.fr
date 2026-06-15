@@ -6,12 +6,8 @@ import FallingText from '@/components/falling-text';
 import Noise from '@/components/noise';
 import ClickSpark from '@/components/click-spark';
 import ImageTrail from '@/components/image-trail';
-import { InteractiveHoverButton } from '@/components/interactive-hover-button';
 import type { SiteConfig } from '@/lib/config';
 
-// DEBUG: show placeholder link buttons + an outline of their zone, to decide
-// placement. Set to false to hide.
-const DEBUG_BUTTONS = true;
 
 const TAGLINE =
   'Développeur fullstack & DevOps, ingénieur UI/UX — IT de bout en bout.';
@@ -215,20 +211,19 @@ export function HomeContent({ config }: { config: SiteConfig }) {
               </ClickSpark>
               <ProjectsHint />
 
-              {/* DEBUG — proposed button placement: centered row at the bottom of
-                  the clear zone (balances the "Projets" hint top-left) */}
-              {DEBUG_BUTTONS && (
-                <div
-                  onClick={noSpark}
-                  className="absolute inset-x-0 bottom-8 flex flex-wrap items-center justify-between gap-3 px-4 py-3 [outline:2px_dashed_#22d3ee]"
-                >
-                  {actions.map((a) => (
-                    <InteractiveHoverButton key={a.label} onClick={a.onClick}>
-                      {a.label}
-                    </InteractiveHoverButton>
-                  ))}
-                </div>
-              )}
+              {/* Link buttons — big bold text-links, bottom-left */}
+              <nav aria-label="Liens" className="absolute bottom-8 left-4 flex flex-col gap-1 md:bottom-10 md:left-8">
+                {actions.map((a) => (
+                  <button
+                    key={a.label}
+                    type="button"
+                    onClick={(e) => { e.stopPropagation(); a.onClick(); }}
+                    className="text-left text-2xl font-black uppercase leading-tight tracking-tight text-bone/45 transition-colors hover:text-bone focus-visible:text-bone focus-visible:outline-none md:text-3xl"
+                  >
+                    {a.label}
+                  </button>
+                ))}
+              </nav>
             </div>
           ) : (
             centerCluster
