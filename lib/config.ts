@@ -72,24 +72,22 @@ function configPath(): string {
     : path.join(process.cwd(), 'data', 'config.json');
 }
 
-// process-global config cache — single-writer/single-process use only
-let cache: SiteConfig | null = null;
-
+// Always read the file fresh — no in-memory cache. The data is tiny and reads
+// are rare, and caching made saved changes appear stale until a restart.
 export async function getConfig(): Promise<SiteConfig> {
-  if (cache) return cache;
   const file = configPath();
   try {
     const raw = await fs.readFile(file, 'utf8');
-    cache = validateConfig(JSON.parse(raw));
+    return validateConfig(JSON.parse(raw));
   } catch (err) {
     if ((err as NodeJS.ErrnoException).code !== 'ENOENT') {
       console.error('[config] unreadable/corrupt config, falling back to default:', err);
     }
-    cache = validateConfig(defaultConfig);
+    const fallback = validateConfig(defaultConfig);
     await fs.mkdir(path.dirname(file), { recursive: true }).catch(() => {});
-    await fs.writeFile(file, JSON.stringify(cache, null, 2), 'utf8').catch(() => {});
+    await fs.writeFile(file, JSON.stringify(fallback, null, 2), 'utf8').catch(() => {});
+    return fallback;
   }
-  return cache;
 }
 
 export async function saveConfig(input: unknown): Promise<SiteConfig> {
@@ -99,6 +97,5 @@ export async function saveConfig(input: unknown): Promise<SiteConfig> {
   await fs.mkdir(path.dirname(file), { recursive: true });
   await fs.writeFile(tmp, JSON.stringify(valid, null, 2), 'utf8');
   await fs.rename(tmp, file);
-  cache = valid;
   return valid;
 }
