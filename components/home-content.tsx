@@ -93,11 +93,6 @@ export function HomeContent({ config }: { config: SiteConfig }) {
     if (url.startsWith('http')) window.open(url, '_blank', 'noopener,noreferrer');
     else window.location.href = url;
   };
-  const actions = [
-    ...config.links.map((l) => ({ label: l.name, onClick: () => handleLinkClick(l.url) })),
-    { label: 'Contact', onClick: handleContactClick },
-  ];
-
   // MARIUS wordmark, centered.
 
   const centerCluster: ReactNode = (
@@ -212,17 +207,29 @@ export function HomeContent({ config }: { config: SiteConfig }) {
               <ProjectsHint />
 
               {/* Link buttons — big bold text-links, bottom-left */}
-              <nav aria-label="Liens" className="absolute bottom-8 left-4 flex flex-col gap-1 md:bottom-10 md:left-8">
-                {actions.map((a) => (
-                  <button
-                    key={a.label}
-                    type="button"
-                    onClick={(e) => { e.stopPropagation(); a.onClick(); }}
-                    className="text-left text-2xl font-black uppercase leading-tight tracking-tight text-bone/45 transition-colors hover:text-bone focus-visible:text-bone focus-visible:outline-none md:text-3xl"
-                  >
-                    {a.label}
-                  </button>
-                ))}
+              <nav aria-label="Liens" className="absolute inset-x-0 bottom-8 flex flex-col items-center gap-4 px-4 md:bottom-10">
+                {/* Contact — prominent filled button, on top */}
+                <button
+                  type="button"
+                  onClick={(e) => { e.stopPropagation(); handleContactClick(); }}
+                  className="border border-bone bg-bone px-8 py-3 text-sm font-bold uppercase tracking-[0.12em] text-burgundy transition-colors hover:bg-burgundy hover:text-bone focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bone focus-visible:ring-offset-2 focus-visible:ring-offset-burgundy"
+                >
+                  Contact
+                </button>
+
+                {/* Social links — bold text-links row, below */}
+                <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-2">
+                  {config.links.map((l) => (
+                    <button
+                      key={l.id}
+                      type="button"
+                      onClick={(e) => { e.stopPropagation(); handleLinkClick(l.url); }}
+                      className="text-2xl font-black uppercase leading-tight tracking-tight text-bone/45 transition-colors hover:text-bone focus-visible:text-bone focus-visible:outline-none md:text-3xl"
+                    >
+                      {l.name}
+                    </button>
+                  ))}
+                </div>
               </nav>
             </div>
           ) : (
