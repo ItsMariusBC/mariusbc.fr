@@ -28,3 +28,4 @@ docs/
 
 # Local editable config (runtime)
 data/
+.env.local
