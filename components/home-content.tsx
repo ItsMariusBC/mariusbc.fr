@@ -136,7 +136,7 @@ export function HomeContent({ config }: { config: SiteConfig }) {
         {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions, jsx-a11y/click-events-have-key-events */}
         <div data-reveal="tagline" onClick={noSpark} className="w-full max-w-2xl px-4" style={dbg('#ef4444')}>
           {enhanced ? (
-            <div className="mx-auto -mt-4 h-24 w-full font-sans font-medium md:-mt-10 md:h-36">
+            <div className="mx-auto -mt-4 h-40 w-full font-sans font-medium md:-mt-10 md:h-36">
               <FallingText
                 text={TAGLINE}
                 highlightWords={HIGHLIGHTS}
