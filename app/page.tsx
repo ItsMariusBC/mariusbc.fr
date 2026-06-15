@@ -12,7 +12,7 @@ export default async function Home() {
       <JsonLd config={config} />
       {/* Crawlable bio (visually hidden) — natural text for search engines */}
       <p className="sr-only">
-        Marius Bizière Couzinet (Marius BC) — développeur fullstack &amp; DevOps,
+        Marius Biziere Couzinet (Marius BC) — développeur fullstack &amp; DevOps,
         ingénieur Web et UI/UX, freelance IT. Fondateur de Clyse.
         Conception, développement et déploiement d&apos;applications web sur mesure.
       </p>
