@@ -77,7 +77,7 @@ export function HomeContent({ config }: { config: SiteConfig }) {
         {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions, jsx-a11y/click-events-have-key-events */}
         <div onClick={noSpark} className="absolute left-1/2 top-full w-full max-w-2xl -translate-x-1/2 px-4" style={dbg('#ef4444')}>
           {enhanced ? (
-            <div className="mx-auto mt-1 h-44 w-full font-sans font-medium md:h-60">
+            <div className="mx-auto -mt-6 h-44 w-full font-sans font-medium md:-mt-8 md:h-60">
               <FallingText
                 text={TAGLINE}
                 highlightWords={HIGHLIGHTS}
@@ -88,7 +88,7 @@ export function HomeContent({ config }: { config: SiteConfig }) {
               />
             </div>
           ) : (
-            <p className="mx-auto mt-1 max-w-2xl text-center text-lg font-medium md:text-2xl text-bone/80">{TAGLINE}</p>
+            <p className="mx-auto -mt-4 max-w-2xl text-center text-lg font-medium md:text-2xl text-bone/80">{TAGLINE}</p>
           )}
         </div>
       </div>
