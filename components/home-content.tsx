@@ -93,19 +93,31 @@ export function HomeContent({ config }: { config: SiteConfig }) {
     };
   }, [enhanced]);
 
+  // One funnel for every interaction → PostHog. `surface: 'mobile' | 'desktop'`
+  // tags each event so we can split phone vs desktop behaviour in the dashboard.
+  const track = (event: string, props?: Record<string, unknown>) => {
+    posthog.capture(event, { surface: isMobile ? 'mobile' : 'desktop', ...props });
+  };
+
   // Stop a click from reaching the ClickSpark wrapper → no spark on these.
   const noSpark = (e: React.MouseEvent) => e.stopPropagation();
 
   const handleContactClick = () => {
     const url = config.contactUrl;
-    posthog.capture('contact_clicked', { contact_url: url });
+    const channel = url.startsWith('mailto:') ? 'email' : url.startsWith('tel:') ? 'phone' : 'link';
+    track('contact_clicked', { cta: 'prendre_rdv', contact_url: url, channel });
     if (url.startsWith('mailto:') || url.startsWith('tel:')) window.location.href = url;
     else window.open(url, '_blank', 'noopener,noreferrer');
   };
   const handleLinkClick = (url: string, name: string) => {
-    posthog.capture('link_clicked', { link_name: name, link_url: url });
+    track('link_clicked', { link_name: name, link_url: url });
     if (url.startsWith('http')) window.open(url, '_blank', 'noopener,noreferrer');
     else window.location.href = url;
+  };
+  // MARIUS wordmark click — playful interaction worth logging.
+  const handleMariusClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    track('marius_clicked');
   };
   // MARIUS wordmark, centered.
 
@@ -114,7 +126,7 @@ export function HomeContent({ config }: { config: SiteConfig }) {
       {/* MARIUS + tagline as ONE in-flow block, centered together */}
       <div className="flex flex-col items-center" style={dbg('#a855f7')}>
         {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions, jsx-a11y/click-events-have-key-events */}
-        <div data-reveal="marius" aria-hidden="true" onClick={noSpark} className="aspect-[4/1] w-[min(88vw,46rem)]" style={dbg('#facc15')}>
+        <div data-reveal="marius" aria-hidden="true" onClick={handleMariusClick} className="aspect-[4/1] w-[min(88vw,46rem)]" style={dbg('#facc15')}>
           {enhanced ? (
             <TextPressure
               text="Marius"
@@ -144,6 +156,7 @@ export function HomeContent({ config }: { config: SiteConfig }) {
                 backgroundColor="transparent"
                 gravity={0.6}
                 fontSize="clamp(1.15rem,2.4vw,1.75rem)"
+                onShatter={() => track('tagline_shattered')}
               />
             </div>
           ) : (
@@ -216,7 +229,7 @@ export function HomeContent({ config }: { config: SiteConfig }) {
             // outside it → no spark there. MARIUS + tagline stopPropagation → no
             // spark on them either. Wider on phones so nothing feels cramped.
             <div className="relative h-[82svh] w-[92vw] max-w-5xl md:h-[80vh] md:w-[72vw]">
-              <ClickSpark sparkColor="#E7E4D8" sparkCount={10} sparkRadius={24}>
+              <ClickSpark sparkColor="#E7E4D8" sparkCount={10} sparkRadius={24} onSpark={() => track('spark_clicked')}>
                 {centerCluster}
               </ClickSpark>
 

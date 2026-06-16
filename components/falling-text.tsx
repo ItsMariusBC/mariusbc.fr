@@ -10,6 +10,8 @@ interface FallingTextProps {
   gravity?: number;
   mouseConstraintStiffness?: number;
   fontSize?: string;
+  /** Fired once when the user triggers the physics (hover/click) and the words drop. */
+  onShatter?: () => void;
 }
 
 const FallingText: React.FC<FallingTextProps> = ({
@@ -20,7 +22,8 @@ const FallingText: React.FC<FallingTextProps> = ({
   wireframes = false,
   gravity = 1,
   mouseConstraintStiffness = 0.2,
-  fontSize = '1rem'
+  fontSize = '1rem',
+  onShatter
 }) => {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const textRef = useRef<HTMLDivElement | null>(null);
@@ -174,6 +177,7 @@ const FallingText: React.FC<FallingTextProps> = ({
   const handleTrigger = () => {
     if (!effectStarted && (trigger === 'click' || trigger === 'hover')) {
       setEffectStarted(true);
+      onShatter?.();
     }
   };
 
