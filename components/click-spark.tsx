@@ -9,6 +9,8 @@ interface ClickSparkProps {
   easing?: 'linear' | 'ease-in' | 'ease-out' | 'ease-in-out';
   extraScale?: number;
   children?: React.ReactNode;
+  /** Fired on each click inside the spark zone (after the spark is spawned). */
+  onSpark?: () => void;
 }
 
 interface Spark {
@@ -26,7 +28,8 @@ const ClickSpark: React.FC<ClickSparkProps> = ({
   duration = 400,
   easing = 'ease-out',
   extraScale = 1.0,
-  children
+  children,
+  onSpark
 }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const sparksRef = useRef<Spark[]>([]);
@@ -148,6 +151,7 @@ const ClickSpark: React.FC<ClickSparkProps> = ({
     }));
 
     sparksRef.current.push(...newSparks);
+    onSpark?.();
   };
 
   return (
