@@ -3,8 +3,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-      # NEXT_PUBLIC_* must reach the build (Next inlines them into the client
-      # bundle). Without these the PostHog token is undefined → no tracking.
+      # NEXT_PUBLIC_* must reach the build — Next inlines them at build time.
       args:
         NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN: ${NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN:-}
         NEXT_PUBLIC_POSTHOG_HOST: ${NEXT_PUBLIC_POSTHOG_HOST:-}
