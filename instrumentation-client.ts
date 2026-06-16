@@ -9,6 +9,10 @@ if (
     api_host: '/ingest',
     ui_host: 'https://eu.posthog.com',
     defaults: '2026-01-30',
+    // Explicit so $pageview fires on load + client-side route changes (App Router
+    // is a SPA — a plain `true` would only count the first hard load).
+    capture_pageview: 'history_change',
+    capture_pageleave: true,
     capture_exceptions: true,
   });
 }
