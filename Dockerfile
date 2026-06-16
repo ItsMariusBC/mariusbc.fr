@@ -11,6 +11,12 @@ RUN npm ci --no-audit --no-fund
 FROM node:22-alpine AS builder
 WORKDIR /app
 ENV NEXT_TELEMETRY_DISABLED=1
+# NEXT_PUBLIC_* are inlined into the client bundle at BUILD time, not runtime.
+# They must be present here or PostHog init is compiled out (no tracking).
+ARG NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN=""
+ARG NEXT_PUBLIC_POSTHOG_HOST=""
+ENV NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN=$NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN \
+    NEXT_PUBLIC_POSTHOG_HOST=$NEXT_PUBLIC_POSTHOG_HOST
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 RUN npm run build
