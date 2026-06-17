@@ -15,8 +15,9 @@ const MAX_IMAGES = 12;
 
 type SaveState = { kind: 'idle' | 'saving' | 'ok' | 'error'; message: string };
 
-/** Validation client — miroir léger de l'allowlist serveur (lib/config). */
-const CONTACT_SCHEMES = ['mailto:', 'tel:', 'https:', 'http:'];
+/** Validation client — miroir exact de l'allowlist serveur (lib/config).
+ *  Contact + liens : SAFE (web + mailto + tel). Images : web uniquement. */
+const SAFE_SCHEMES = ['https:', 'http:', 'mailto:', 'tel:'];
 const WEB_SCHEMES = ['https:', 'http:'];
 
 function schemeOk(value: string, schemes: string[]): boolean {
@@ -46,9 +47,9 @@ export function DashboardEditor({ initial }: { initial: SiteConfig }) {
   );
 
   // — Validation inline : champs fautifs marqués + blocage au save.
-  const contactInvalid = !schemeOk(contactUrl, CONTACT_SCHEMES);
+  const contactInvalid = !schemeOk(contactUrl, SAFE_SCHEMES);
   const linkErrors = useMemo(
-    () => links.map((l) => !schemeOk(l.url, WEB_SCHEMES)),
+    () => links.map((l) => !schemeOk(l.url, SAFE_SCHEMES)),
     [links]
   );
   const imgInvalid = imgInput.trim() !== '' && !schemeOk(imgInput, WEB_SCHEMES);
@@ -253,7 +254,7 @@ export function DashboardEditor({ initial }: { initial: SiteConfig }) {
                       <Button variant="ghost" size="icon" onClick={() => setConfirmDelete(pendingDelete ? null : l.id)} aria-label="Supprimer" aria-expanded={pendingDelete} className="text-destructive hover:text-destructive"><X className="h-4 w-4" /></Button>
                     </div>
                   </div>
-                  {urlBad && <p className="text-xs text-destructive">URL invalide — http(s) attendu.</p>}
+                  {urlBad && <p className="text-xs text-destructive">URL invalide — https://, mailto: ou tel: attendu.</p>}
                   {pendingDelete && (
                     <div className="flex items-center justify-between gap-2 rounded-md border border-destructive bg-destructive/10 px-3 py-2 text-sm">
                       <span>Supprimer ce lien ?</span>
